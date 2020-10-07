@@ -4,8 +4,47 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "245cd437be6aea5dd6d08cfb50a5bde6",
-    "packages": [],
+    "content-hash": "e3c6f8db5af959b55c5f0ea2971cb8dc",
+    "packages": [
+        {
+            "name": "nonetallt/string",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "git@bitbucket.org:worfer/string.git",
+                "reference": "1e91663fdb1c9eab194c80e23eb30692b8f86631"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://packages.nanu.systems/downloads/nonetallt/string/nonetallt-string-1.0.0-232277.zip",
+                "reference": "1e91663fdb1c9eab194c80e23eb30692b8f86631",
+                "shasum": "d248f57de485d292bffd68a2f8b5f17d4584a89c"
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "nonetallt/markdown-documentation": "dev-master",
+                "phpunit/phpunit": "^9.1",
+                "spatie/phpunit-watcher": "^1.22",
+                "vlucas/phpdotenv": "^4.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Nonetallt\\String\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Test\\": "test/"
+                }
+            },
+            "description": "String processing helpers",
+            "time": "2020-05-15T12:09:19+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "clue/stdio-react",
@@ -2731,5 +2770,6 @@
     "platform": {
         "php": ">=7.1"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }

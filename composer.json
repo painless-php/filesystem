@@ -1,9 +1,10 @@
 {
-    "name": "nonetallt/package-boilerplate",
-    "description": "Generic package boilerplate without framework scaffolding",
+    "name": "nonetallt/file",
+    "description": "OOP file class and related code for PHP.",
     "type": "project",
     "require": {
-        "php": ">=7.1"
+        "php": ">=7.1",
+        "nonetallt/string": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.1",
@@ -13,7 +14,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Nonetallt\\": "src/"
+            "Nonetallt\\File\\": "src/"
         }
     },
     "autoload-dev": {

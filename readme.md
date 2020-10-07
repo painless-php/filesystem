@@ -1,20 +1,18 @@
-# php package boilerplate
+# file
 
-Basic boilerplate for generic php packages
-
-## Usage
-
-Create new project
-
-```
-composer create-project nonetallt/package-boilerplate [project-name]
-```
+PHP file manipulation using OOP.
 
 ## Public API
 
-Define the semantic versioning public api
+#### Core
 
-## New package todo
+* Nonetallt\File\File
+* Nonetallt\File\FilePermissions
 
-* edit composer.json
-* edit readme
+#### Exception
+
+* Nonetallt\File\Exception\FilesystemException
+    * Nonetallt\File\Exception\FileNotFoundException
+    * Nonetallt\File\Exception\PermissionException
+    * Nonetallt\File\Exception\TargetNotDirectoryException
+    * Nonetallt\File\Exception\TargetNotFileException
