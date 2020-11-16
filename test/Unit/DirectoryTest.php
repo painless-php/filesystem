@@ -55,28 +55,26 @@ class DirectoryTest extends TestCase
         $oldPath = $this->getTestPath('output/old/1');
         $dir = new Directory($oldPath);
         $dir->create(true);
-        file_put_contents("$oldPath/file", 'content');
 
         $newPath = $this->getTestPath('output/new/1');
-        $dir->move($newPath);
+        $dir->move($newPath, true);
 
-        var_dump(file_exists($newPath));
-
-        $this->assertFalse(file_exists("$oldPath/file"));
-        $this->assertTrue(file_exists("$newPath/file"));
+        $this->assertFalse(file_exists($oldPath));
+        $this->assertTrue(file_exists($newPath));
     }
 
     public function testMoveMovesDirectoryContents()
     {
         $oldPath = $this->getTestPath('output/foo');
-        mkdir($oldPath);
         $dir = new Directory($oldPath);
+        $dir->create();
+        file_put_contents("$oldPath/file", 'content');
 
         $newPath = $this->getTestPath('output/bar');
         $dir->move($newPath);
 
-        $this->assertFalse(file_exists($oldPath));
-        $this->assertTrue(file_exists($newPath));
+        $this->assertFalse(file_exists("$oldPath/file"));
+        $this->assertTrue(file_exists("$newPath/file"));
     }
 
     public function testGetSizeReturnsCombinedSizeOfDirectoryContents()
@@ -87,26 +85,64 @@ class DirectoryTest extends TestCase
 
     public function testGetPathReturnsPathname()
     {
-
+        $path = $this->getTestPath('input/size');
+        $dir = new Directory($path);
+        $this->assertEquals($path, $dir->getPath());
     }
 
     public function testDeleteContentsThrowsExceptionWhenTryingToDeleteNonEmptyDirWithoutRecursive()
     {
+        $path = $this->getTestPath('output/dir');
+        $dir = new Directory($path);
+        $dir->create();
+        file_put_contents("$path/file", 'content');
 
+        $this->expectException(FilesystemException::class);
+        $dir->delete();
+    }
+
+    public function testDeleteContentsDoesNotDeleteDirectoryItself()
+    {
+        $path = $this->getTestPath('output/dir');
+        $dir = new Directory($path);
+        $dir->create();
+        file_put_contents("$path/file", 'content');
+
+        $dir->deleteContents();
+
+        $this->assertTrue(file_exists($path));
     }
 
     public function testDeleteContentsDeletesDirectoryContents()
     {
+        $path = $this->getTestPath('output/dir');
+        $dir = new Directory($path);
+        $dir->create();
+        file_put_contents("$path/file", 'content');
 
+        $dir->deleteContents();
+
+        $this->assertFalse(file_exists("$path/file"));
     }
 
     public function testDeleteDeletesDirectory()
     {
-            
+        $path = $this->getTestPath('output/dir');
+        $dir = new Directory($path);
+        $dir->create();
+        $dir->delete();
+
+        $this->assertFalse(file_exists($path));
     }
 
-    public function testDeleteDeletesDirectoryContents()
+    public function testRecursiveDeleteDeletesDirectoryContents()
     {
+        $path = $this->getTestPath('output/dir');
+        $dir = new Directory($path);
+        $dir->create();
+        file_put_contents("$path/file", 'content');
 
+        $dir->delete(true);
+        $this->assertFalse(file_exists("$path/file"));
     }
 }
