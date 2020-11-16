@@ -5,17 +5,24 @@ namespace Nonetallt\File;
 use Nonetallt\File\Exception\FilesystemException;
 use Nonetallt\File\Exception\FileNotFoundException;
 use Nonetallt\File\Exception\TargetNotFileException;
+use Nonetallt\File\Exception\PermissionException;
 use Nonetallt\File\FilesystemPermissions;
 use Nonetallt\String\Str;
-use Nonetallt\File\Exception\PermissionException;
 
-class File implements \IteratorAggregate
+class File extends FilesystemObject implements \IteratorAggregate
 {
-    private $pathname;
-
-    public function __construct(string $pathname)
+    /**
+     * Create the file on the filesystem
+     *
+     */
+    public function create(bool $recursive = false)
     {
-        $this->setPathname($pathname);
+        if($recursive) {
+            $dir = new Directory(dirname($this->pathname));
+            $dir->create(true);
+        }
+
+        file_put_contents($this->pathname, '');
     }
 
     /**
@@ -34,6 +41,11 @@ class File implements \IteratorAggregate
     {
         // TODO permissions?
         unlink($this->pathname);
+    }
+
+    public function deleteContents()
+    {
+        file_put_contents($this->pathname, '');
     }
 
     public function exists() : bool
@@ -58,18 +70,6 @@ class File implements \IteratorAggregate
         return $this->getExtension() === $extension;
     }
     
-
-    public function setPathname(string $pathname)
-    {
-        /* Reset cache if path has changed */
-        if($this->pathname !== null && $pathname !== $this->pathname) {
-            /* TODO */
-            /* $this->forgetLazyLoadedProperties(); */
-        }
-
-        $this->pathname = $pathname;
-    }
-
     /**
      * @throws Nonetallt\Helpers\Filesystem\Exceptions\FilesystemException
      *
@@ -224,6 +224,7 @@ class File implements \IteratorAggregate
             throw new PermissionException($msg, $destination);
         }
 
+        // TODO recursive, create destination?
         copy($this->pathname, $destination);
     }
 
@@ -231,11 +232,15 @@ class File implements \IteratorAggregate
     {
         $this->copy($destination);
         unlink($this->pathname);
-        $this->setPathname($destination);
     }
 
     public function rename(string $name)
     {
         $this->move($this->getPath() . DIRECTORY_SEPARATOR . $name);
+    }
+
+    public function isEmpty() : bool
+    {
+        return $this->getSize() === 0;
     }
 }
