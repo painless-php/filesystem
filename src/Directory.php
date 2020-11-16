@@ -62,15 +62,13 @@ class Directory extends FilesystemObject
      * Copy the filesystem object
      *
      */
-    public function copy(string $destination)
+    public function copy(string $destination, bool $recursive = false)
     {
-        $this->create($destination);
-        var_dump($destination);
+        (new Directory($destination))->create($recursive);
 
         foreach($this->getChildren() as $object) {
-            if($object->isFile() || ($object->isDirectory() && $recursive)) {
-                $object->delete();
-            }
+            $object->copy($destination . DIRECTORY_SEPARATOR . basename($object->getPathname()));
+            $object->delete();
         }
     }
 
@@ -78,9 +76,9 @@ class Directory extends FilesystemObject
      * Move the filesystem object
      *
      */
-    public function move(string $destination)
+    public function move(string $destination, bool $recursive = false)
     {
-        $this->copy($destination);
+        $this->copy($destination, $recursive);
         $this->delete(true);
     }
 
@@ -139,7 +137,7 @@ class Directory extends FilesystemObject
             throw new TargetNotDirectoryException($this->pathname);
         }
 
-        return (new \FilesystemIterator($this->pathname))->valid();
+        return ! (new \FilesystemIterator($this->pathname))->valid();
     }
 
     /**
