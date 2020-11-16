@@ -37,3 +37,14 @@ PHP file manipulation using OOP.
 * File abstract isEmpty()
     * dir check using scandir?
     * file check if content is blank or 0 size?
+
+* File getSize()
+    * should directory inlcude dir object (node) size?
+        * recursive option to include contents, otherwise filesize?
+
+
+* tests for isEmpty
+
+* download documentation package, brc command to edit?
+    * make note of string usage '' vs "", latter should only be used when
+      required by syntax (and instead of .)
