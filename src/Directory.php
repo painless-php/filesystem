@@ -42,14 +42,17 @@ class Directory extends FilesystemObject
     }
 
     /**
-     * Get the size of the objec in filesystem in bytes
+     * Get the size of the object in filesystem in bytes. This method returns
+     * the size of the directory as well as all directories and files contained
+     * within. If you want to get the size of the directory node object
+     * instead, just call php filesize() function on the path
      *
      * @return int $size filesize in bytes
      *
      */
     public function getSize() : int
     {
-        $size = 0;
+        $size = filesize($this->pathname);
 
         foreach($this->getChildren() as $child)  {
             $size += $child->getSize();
