@@ -5,7 +5,7 @@ namespace Nonetallt\File;
 use Nonetallt\File\Exception\FilesystemException;
 use Nonetallt\File\Exception\FileNotFoundException;
 use Nonetallt\File\Exception\TargetNotFileException;
-use Nonetallt\File\FilePermissions;
+use Nonetallt\File\FilesystemPermissions;
 use Nonetallt\String\Str;
 use Nonetallt\File\Exception\PermissionException;
 
@@ -127,9 +127,9 @@ class File implements \IteratorAggregate
         return new FileLineIterator($this);
     }
 
-    public function getPermissions() : FilePermissions
+    public function getPermissions() : FilesystemPermissions
     {
-        return new FilePermissions($this->pathname);
+        return new FilesystemPermissions($this->pathname);
     }
 
     public function getExtension() : ?string
@@ -207,7 +207,7 @@ class File implements \IteratorAggregate
 
     public function copy(string $destination)
     {
-        $permissions = new FilePermissions($destination);
+        $permissions = new FilesystemPermissions($destination);
 
         if(! $this->exists()) {
             throw new FileNotFoundException($this->pathname);
