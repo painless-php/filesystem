@@ -77,10 +77,10 @@ class DirectoryTest extends TestCase
         $this->assertTrue(file_exists("$newPath/file"));
     }
 
-    public function testGetSizeReturnsCombinedSizeOfDirectoryContents()
+    public function testGetSizeRecursiveReturnsCombinedSizeOfDirectoryAndItsContents()
     {
         $dir = new Directory($this->getTestPath('input/size'));
-        $this->assertEquals(5184, $dir->getSize());
+        $this->assertEquals(9280, $dir->getSize());
     }
 
     public function testGetPathReturnsPathname()
@@ -144,5 +144,34 @@ class DirectoryTest extends TestCase
 
         $dir->delete(true);
         $this->assertFalse(file_exists("$path/file"));
+    }
+
+    public function testIsEmptyReturnsTrueWhenDirIsEmpty()
+    {
+        $path = $this->getTestPath('output/dir');
+        $dir = new Directory($path);
+        $dir->create();
+
+        $this->assertTrue($dir->isEmpty());
+    }
+
+    public function testIsEmptyReturnsFalseWhenDirHasFiles()
+    {
+        $path = $this->getTestPath('output/dir');
+        $dir = new Directory($path);
+        $dir->create();
+        file_put_contents("$path/file", 'content');
+
+        $this->assertFalse($dir->isEmpty());
+    }
+
+    public function testIsEmptyReturnsFalseWhenDirHasDirectories()
+    {
+        $path = $this->getTestPath('output/dir');
+        $dir = new Directory($path);
+        $dir->create();
+        mkdir("$path/dir");
+
+        $this->assertFalse($dir->isEmpty());
     }
 }
