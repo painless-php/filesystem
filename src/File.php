@@ -47,8 +47,7 @@ class File implements \IteratorAggregate
         /* Remove leading dots for comparison */
         while(Str::startsWith($extension, '.')) {
             $extension = substr($extension, 1);
-        }
-
+        } 
         /* Check if the file extension equals the one given by user */
         return $this->getExtension() === $extension;
     }
@@ -163,11 +162,6 @@ class File implements \IteratorAggregate
         return new FileLineIterator($this);
     }
 
-    public function getFile() : File
-    {
-        return $this->file;
-    }
-
     /**
      * string|FileLineIterator|File $content
      *
@@ -214,7 +208,8 @@ class File implements \IteratorAggregate
         }
 
         if(! $this->getPermissions()->isReadable()) {
-            $msg = "Copy source '$this->pathname' is not readable";
+            $path = $this->getRealPath();
+            $msg = "Copy source '$path' is not readable";
             throw new PermissionException($msg, $destination);
         }
 

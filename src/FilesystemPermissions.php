@@ -4,7 +4,7 @@ namespace Nonetallt\File;
 
 use Nonetallt\File\Exception\PermissionException;
 
-class FilePermissions
+class FilesystemPermissions
 {
     /**
      * fopen() mode permission requirements
@@ -23,15 +23,18 @@ class FilePermissions
         'e' => []
     ];
 
-    private $path;
+    private $pathname;
 
-    public function __construct(string $path)
+    public function __construct(string $pathname)
     {
-        $this->path = $path;
+        $this->pathname = $pathname;
     }
 
     /**
+     * Check if the stream with a given mode can be opened
+     *
      * @throws Nonetallt\Helpers\Filesystem\Exceptions\PermissionException
+     *
      */
     public function validateStreamMode(string $mode)
     {
@@ -66,9 +69,13 @@ class FilePermissions
 
         $missing = implode(', ', $missingPermissions);
         $msg = "Missing required permissions [$missing] for stream mode '$mode'";
-        throw new PermissionException($msg, $this->path);
+        throw new PermissionException($msg, $this->pathname);
     }
 
+    /**
+     * Check if the stream with a given mode can be opened
+     *
+     */
     public function isStreamModeValid(string $mode) : bool
     {
         try {
@@ -81,6 +88,12 @@ class FilePermissions
         return true;
     }
 
+    /**
+     * Check if the file has a given permission
+     *
+     * @param string $operation read or write
+     *
+     */
     public function hasPermission(string $operation)
     {
         if($operation === 'read') {
@@ -95,19 +108,27 @@ class FilePermissions
         throw new \InvalidArgumentException($msg);
     }
 
+    /**
+     * Check if the file is readable
+     *
+     */
     public function isReadable() : bool
     {
-        return is_readable($this->path);
+        return is_readable($this->pathname);
     }
 
+    /**
+     * Check if the file is writable
+     *
+     */
     public function isWritable() : bool
     {
         // If file exists, check if it's writable
-        if(file_exists($this->path)) {
-            return is_writable($this->path);
+        if(file_exists($this->pathname)) {
+            return is_writable($this->pathname);
         }
 
         // If file does not exist, check if it's directory is writable
-        return is_writable(dirname($this->path));
+        return is_writable(dirname($this->pathname));
     }
 }

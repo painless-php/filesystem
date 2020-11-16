@@ -15,6 +15,11 @@ trait TestsFiles
      */
     protected function cleanOutput()
     {
+        $this->deleteDirectory($this->getTestPath('output'), false);
+    }
+
+    private function deleteDirectory(string $dirPath, bool $deleteDir)
+    {
         $exclude = [
             '.', 
             '..',
@@ -22,8 +27,20 @@ trait TestsFiles
             '.keep'
         ];
 
-        foreach(array_diff(scandir($this->getTestPath('output')), $exclude) as $filename) {
-             unlink($this->getTestPath("output/$filename"));
+        foreach(array_diff(scandir($dirPath), $exclude) as $relativePath) {
+            $realPath = $dirPath . DIRECTORY_SEPARATOR . $relativePath;
+
+            if(is_dir($realPath)) {
+                $this->deleteDirectory($realPath, true);
+            }
+
+            if(is_file($realPath)) {
+                unlink($realPath);
+            }
+        }
+
+        if($deleteDir) {
+            rmdir($dirPath);
         }
     }
 
