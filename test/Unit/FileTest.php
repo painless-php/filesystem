@@ -28,8 +28,8 @@ class FileTest extends TestCase
 
     public function testExistsReturnsFalseWhenFileDoesNotExist()
     {
-        $this->file->setPathname(__FILE__ . 'foobar');
-        $this->assertFalse($this->file->exists());
+        $file = new File(__FILE__ . 'foobar');
+        $this->assertFalse($file->exists());
     }
 
     public function testHasExtensionReturnsTrueWhenFileHasExtension()
@@ -39,8 +39,8 @@ class FileTest extends TestCase
 
     public function testHasExtensionReturnsFalseWhenFileHasNoExtension()
     {
-        $this->file->setPathname('foobar');
-        $this->assertFalse($this->file->hasExtension());
+        $file = new File('foobar');
+        $this->assertFalse($file->hasExtension());
     }
 
     public function testHasExtensionReturnsTrueWhenFileHasTheSpecifiedExtension()
@@ -71,22 +71,22 @@ class FileTest extends TestCase
     public function testOpenStreamThrowsFileNotFoundExceptionWhenFileDoesNotExist()
     {
         $this->expectException(FileNotFoundException::class);
-        $this->file->setPathname('foobar');
-        $this->file->openStream('r');
+        $file = new File('foobar');
+        $file->openStream('r');
     }
 
     public function testOpenStreamThrowsTargetNotFileExceptionWhenFileIsDir()
     {
         $this->expectException(TargetNotFileException::class);
-        $this->file->setPathname(__DIR__);
-        $this->file->openStream('r');
+        $file = new File(__DIR__);
+        $file->openStream('r');
     }
 
     public function testOpenStreamThrowsPermissionExceptionWhenReaderHasNoAccess()
     {
         $this->expectException(PermissionException::class);
-        $this->file->setPathname('/etc/sudoers');
-        $this->file->openStream('r');
+        $file = new File('/etc/sudoers');
+        $file->openStream('r');
     }
 
     public function testIsFileReturnsTrueWhenPathPointsToFile()
@@ -96,20 +96,20 @@ class FileTest extends TestCase
 
     public function testIsFileReturnsFalseWhenPathPointsToDir()
     {
-        $this->file->setPathname(__DIR__);
-        $this->assertFalse($this->file->isFile());
+        $file = new File(__DIR__);
+        $this->assertFalse($file->isFile());
     }
 
     public function testIsFileReturnsFalseWhenPathDoesNotExist()
     {
-        $this->file->setPathname(__DIR__ . 'foobar.json');
-        $this->assertFalse($this->file->isFile());
+        $file = new File(__DIR__ . 'foobar.json');
+        $this->assertFalse($file->isFile());
     }
 
     public function testIsDirReturnsTrueWhenPathPointsToDir()
     {
-        $this->file->setPathname(__DIR__);
-        $this->assertTrue($this->file->isDir());
+        $file = new File(__DIR__);
+        $this->assertTrue($file->isDir());
     }
 
     public function testIsDirReturnsFalseWhenPathPointsToFile()
@@ -119,8 +119,8 @@ class FileTest extends TestCase
 
     public function testIsDirReturnsFalseWhenPathDoesNotExist()
     {
-        $this->file->setPathname(__DIR__ . 'foobar.json');
-        $this->assertFalse($this->file->isDir());
+        $file = new File(__DIR__ . 'foobar.json');
+        $this->assertFalse($file->isDir());
     }
 
     public function testGetSizeReturnsInteger()
@@ -130,9 +130,9 @@ class FileTest extends TestCase
 
     public function testGetSizeThrowsFileNotFoundExceptionWhenFileDoesNotExist()
     {
-        $this->file->setPathname(__DIR__ . 'foobar.json');
+        $file = new File(__DIR__ . 'foobar.json');
         $this->expectException(FileNotFoundException::class);
-        $this->file->getSize();
+        $file->getSize();
     }
 
     public function testFileImplementsIteratorAggregate()
