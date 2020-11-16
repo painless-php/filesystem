@@ -7,7 +7,7 @@ PHP file manipulation using OOP.
 #### Core
 
 * Nonetallt\File\File
-* Nonetallt\File\FilePermissions
+* Nonetallt\File\FilesystemPermissions
 
 #### Testing
 
@@ -30,20 +30,10 @@ PHP file manipulation using OOP.
     * extend to file
     * extend to directory
 
-* File->create(true) - create path recursively
-    * what happens if root (/) is reached?
-        * make sure there is no loop or bugs
 
-* File abstract isEmpty()
-    * dir check using scandir?
-    * file check if content is blank or 0 size?
+* File
+    * test isEmpty
 
-* File getSize()
-    * should directory inlcude dir object (node) size?
-        * recursive option to include contents, otherwise filesize?
-
-
-* tests for isEmpty
 
 * download documentation package, brc command to edit?
     * make note of string usage '' vs "", latter should only be used when
