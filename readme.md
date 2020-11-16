@@ -9,6 +9,10 @@ PHP file manipulation using OOP.
 * Nonetallt\File\File
 * Nonetallt\File\FilePermissions
 
+#### Testing
+
+* Nonetallt\File\Concern\TestsFiles
+
 #### Exception
 
 * Nonetallt\File\Exception\FilesystemException
@@ -27,4 +31,9 @@ PHP file manipulation using OOP.
     * extend to directory
 
 * File->create(true) - create path recursively
-* File->delete(true) - delete contents recursively if directory
+    * what happens if root (/) is reached?
+        * make sure there is no loop or bugs
+
+* File abstract isEmpty()
+    * dir check using scandir?
+    * file check if content is blank or 0 size?

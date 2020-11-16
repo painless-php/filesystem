@@ -30,6 +30,12 @@ class File implements \IteratorAggregate
         return new self($meta['uri']);
     }
 
+    public function delete()
+    {
+        // TODO permissions?
+        unlink($this->pathname);
+    }
+
     public function exists() : bool
     {
         return file_exists($this->pathname);

@@ -4,6 +4,13 @@ namespace Nonetallt\File\Concern;
 
 use Nonetallt\String\Str;
 
+/**
+ * Trait that can be attached to test classes that test filesystem
+ *
+ * Cleans test/output or tests/output directory before and after each test and
+ * provides test path helpers
+ *
+ */
 trait TestsFiles
 {
     private $basePath;

@@ -96,13 +96,19 @@ abstract class FilesystemObject
     /**
      * Create the object on the filesystem
      *
+     * @param bool $recursive Whether parent directories should be created
+     * recursively when creating this object. If parent directory does not
+     * exist and recurisive is set to false, a FilesystemException should be
+     * thrown
+     *
      */
+    abstract public function create(bool $recursive = false);
 
     /**
      * Copy the filesystem object
      *
      */
-    abstract public function copy(string $destination) : FilesystemObject;
+    abstract public function copy(string $destination);
 
     /**
      * Move the filesystem object
@@ -110,7 +116,7 @@ abstract class FilesystemObject
      * Supersedes "rename" functionality
      *
      */
-    abstract public function move(string $destination) : FilesystemObject;
+    abstract public function move(string $destination);
 
     /**
      * Get the path of the object
@@ -131,4 +137,10 @@ abstract class FilesystemObject
      *
      */
     abstract public function deleteContents();
+
+    /**
+     * Check if the object is empty
+     *
+     */
+    abstract public function isEmpty() : bool;
 }
