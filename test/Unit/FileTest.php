@@ -75,9 +75,9 @@ class FileTest extends TestCase
         $file->openStream('r');
     }
 
-    public function testOpenStreamThrowsTargetNotFileExceptionWhenFileIsDir()
+    public function testOpenStreamThrowsFileNotFoundExceptionWhenFileIsDir()
     {
-        $this->expectException(TargetNotFileException::class);
+        $this->expectException(FileNotFoundException::class);
         $file = new File(__DIR__);
         $file->openStream('r');
     }
@@ -109,18 +109,18 @@ class FileTest extends TestCase
     public function testIsDirReturnsTrueWhenPathPointsToDir()
     {
         $file = new File(__DIR__);
-        $this->assertTrue($file->isDir());
+        $this->assertTrue($file->isDirectory());
     }
 
     public function testIsDirReturnsFalseWhenPathPointsToFile()
     {
-        $this->assertFalse($this->file->isDir());
+        $this->assertFalse($this->file->isDirectory());
     }
 
     public function testIsDirReturnsFalseWhenPathDoesNotExist()
     {
         $file = new File(__DIR__ . 'foobar.json');
-        $this->assertFalse($file->isDir());
+        $this->assertFalse($file->isDirectory());
     }
 
     public function testGetSizeReturnsInteger()
@@ -144,5 +144,37 @@ class FileTest extends TestCase
     {
         $input = new File($this->getTestPath('input/test.json'));
         $this->assertEquals("[\"foobar\"]\n", $input->getContent());
+    }
+
+    public function testRenameCreatesFileAtNewPath()
+    {
+        $path = $this->getTestPath('output/file');
+        $file = new File($path);
+        $file->create();
+        $file->rename('renamed_file');
+
+        $this->assertTrue(file_exists($this->getTestPath('output/renamed_file')));
+    }
+
+    public function testRenameDeletesFileAtOldPath()
+    {
+        $path = $this->getTestPath('output/file');
+        $file = new File($path);
+        $file->create();
+        $file->rename('renamed_file');
+
+        $this->assertFalse(file_exists($path));
+    }
+
+    public function testIsEmptyReturnsTrueForEmptyFile()
+    {
+        $file = new File($this->getTestPath('input/empty.txt'));
+        $this->assertTrue($file->isEmpty());
+    }
+
+    public function testIsEmptyReturnsFalseForFileWithContent()
+    {
+        $file = new File($this->getTestPath('input/10_lines.txt'));
+        $this->assertFalse($file->isEmpty());
     }
 }

@@ -25,8 +25,8 @@ class FileModificationTest extends TestCase
     {
         $source = new File($this->getTestPath("input/$file"));
         $outputPath = $this->getTestPath("output/$file");
-
         $source->copy($outputPath);
+
         return new File($outputPath);
     }
 
@@ -50,9 +50,10 @@ class FileModificationTest extends TestCase
     public function testMoveCreatesNewFile()
     {
         $file = $this->copyToOutput('10_lines.txt');
-        $file->move($this->getTestPath('output/new.txt'));
+        $newPath = $this->getTestPath('output/new.txt');
+        $file->move($newPath);
 
-        $this->assertTrue(file_exists($file->getPathname()));
+        $this->assertTrue(file_exists($newPath));
     }
 
     public function testRenameRemovesOldFile()

@@ -5,7 +5,6 @@ namespace Nonetallt\File;
 use Nonetallt\File\FilesystemObject;
 use Nonetallt\File\Exception\PermissionException;
 use Nonetallt\File\Exception\FileNotFoundException;
-use Nonetallt\File\Exception\TargetNotDirectoryException;
 use Nonetallt\File\Exception\FilesystemException;
 
 class Directory extends FilesystemObject
@@ -17,17 +16,27 @@ class Directory extends FilesystemObject
     public function create(bool $recursive = false)
     {
         // Do not attempt creation if file already exists
-        if(file_exists($this->pathname)) {
+        if(is_dir($this->pathname)) {
             return;
+        }
+        else if(is_file($this->pathname)) {
+            $msg = "A file with this name already exists";
+            throw new FilesystemException($msg, $this->pathname);
         }
 
         // Check if parent directory exists, if not, create it recursively
         $parentDir = dirname($this->pathname);
 
-        if(! file_exists($parentDir)) {
+        if(! is_dir($parentDir)) {
+
             if(! $recursive) {
                 $msg = "Can't create missing parent directory, recursive option not enabled";
                 throw new FilesystemException($msg, $parentDir);
+            }
+
+            if(is_file($parentDir)) {
+                $msg = "Can't create missing parent directory, file with this name already exists";
+                throw new FileNotFoundException($msg, $parentDir);
             }
 
             (new Directory($parentDir))->create(true);
@@ -136,10 +145,6 @@ class Directory extends FilesystemObject
             throw new FileNotFoundException($this->pathname);
         }
 
-        if(! $this->isDirectory()) {
-            throw new TargetNotDirectoryException($this->pathname);
-        }
-
         return ! (new \FilesystemIterator($this->pathname))->valid();
     }
 
@@ -158,6 +163,24 @@ class Directory extends FilesystemObject
         }
 
         return $children;
+    }
+
+    /**
+     * Check if this directory exists on the filesystem
+     *
+     */
+    public function exists() : bool
+    {
+        return is_dir($this->pathname);
+    }
+
+    /**
+     * Rename the directory
+     *
+     */
+    public function rename(string $newName)
+    {
+        $this->move(dirname($this->pathname) . DIRECTORY_SEPARATOR . $newName, true);
     }
 }
 

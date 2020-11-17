@@ -3,16 +3,16 @@
 namespace Test\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Nonetallt\File\FilePermissions;
+use Nonetallt\File\FilesystemPermissions;
 
-class FilePermissionsTest extends TestCase
+class FilesystemPermissionsTest extends TestCase
 {
     private $permissions;
 
     public function setUp() : void
     {
         parent::setUp();
-        $this->permissions = new FilePermissions(__FILE__);
+        $this->permissions = new FilesystemPermissions(__FILE__);
     }
 
     public function testIsReadableReturnsTrueWhenFileIsReadable()
@@ -22,12 +22,12 @@ class FilePermissionsTest extends TestCase
 
     public function testIsReadableReturnsFalseWhenFileDoesNotExist()
     {
-        $this->assertFalse((new FilePermissions('foobar'))->isReadable());
+        $this->assertFalse((new FilesystemPermissions('foobar'))->isReadable());
     }
 
     public function testIsReadableReturnsFalseWhenUserDoesNotHavePermissionsToReadFile()
     {
-        $this->assertFalse((new FilePermissions('/etc/sudoers'))->isReadable());
+        $this->assertFalse((new FilesystemPermissions('/etc/sudoers'))->isReadable());
     }
 
     public function testIsWritableReturnsTrueWhenFileIsWritable()
@@ -37,16 +37,16 @@ class FilePermissionsTest extends TestCase
 
     public function testIsWritableReturnsFalseWhenFileIsNotWritable()
     {
-        $this->assertFalse((new FilePermissions('/etc/sudoers'))->isWritable());
+        $this->assertFalse((new FilesystemPermissions('/etc/sudoers'))->isWritable());
     }
 
     public function testIsWritableReturnsTrueWhenFileDoesNotExistAndDirectoryIsWritable()
     {
-        $this->assertTrue((new FilePermissions(__DIR__ . 'foo.json'))->isWritable());
+        $this->assertTrue((new FilesystemPermissions(__DIR__ . 'foo.json'))->isWritable());
     }
 
     public function testIsWritableReturnsFalseWhenFileDoesNotExistAndDirectoryIsNotWritable()
     {
-        $this->assertFalse((new FilePermissions('/etc/foo.json'))->isWritable());
+        $this->assertFalse((new FilesystemPermissions('/etc/foo.json'))->isWritable());
     }
 }

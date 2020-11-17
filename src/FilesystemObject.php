@@ -1,5 +1,8 @@
 <?php 
+
 namespace Nonetallt\File;
+
+use Nonetallt\File\Exception\FilesystemException;
 
 /**
  * Meta object describing all filesystem entities. The object itself only
@@ -20,12 +23,22 @@ abstract class FilesystemObject
     }
 
     /**
-     * Check if this object actually exists in the filesystem
+     * Create either a file or a directory from the given path based on which
+     * object the path corresponds to on the filesystem
      *
      */
-    public function exists() : bool
+    public static function fromPath(string $pathname) : self
     {
-        return file_exists($this->pathname);
+        if(is_file($pathname)) {
+            return new File($pathname);
+        }
+
+        if(is_dir($pathname)) {
+            return new Directory($pathname);
+        }
+
+        $msg = 'Filesystem object with the given path does not exist';
+        throw new FilesystemException($msg, $pathname);
     }
 
     /**
@@ -86,6 +99,12 @@ abstract class FilesystemObject
     }
 
     /**
+     * Check if this object actually exists in the filesystem
+     *
+     */
+    abstract public function exists() : bool;
+
+    /**
      * Get the size of the objec in filesystem in bytes
      *
      * @return int $size filesize in bytes
@@ -113,7 +132,8 @@ abstract class FilesystemObject
     /**
      * Move the filesystem object
      *
-     * Supersedes "rename" functionality
+     * If you don't need to move the object between directories, you can use
+     * the "rename" functionality instead
      *
      */
     abstract public function move(string $destination);
@@ -143,4 +163,12 @@ abstract class FilesystemObject
      *
      */
     abstract public function isEmpty() : bool;
+
+    /**
+     * Rename the filesystem object. Provides a convenient way to quickly
+     * change the object's name without requiring a precise destination path
+     * like move
+     *
+     */
+    abstract public function rename(string $newName);
 }

@@ -4,13 +4,24 @@ namespace Nonetallt\File;
 
 use Nonetallt\File\Exception\FilesystemException;
 use Nonetallt\File\Exception\FileNotFoundException;
-use Nonetallt\File\Exception\TargetNotFileException;
 use Nonetallt\File\Exception\PermissionException;
 use Nonetallt\File\FilesystemPermissions;
 use Nonetallt\String\Str;
 
 class File extends FilesystemObject implements \IteratorAggregate
 {
+    /**
+     * Create a new temporary file
+     *
+     */
+    public static function temp() : self
+    {
+        $tmp = tmpfile();
+        $meta = stream_get_meta_data($tmp);
+
+        return new self($meta['uri']);
+    }
+
     /**
      * Create the file on the filesystem
      *
@@ -26,33 +37,27 @@ class File extends FilesystemObject implements \IteratorAggregate
     }
 
     /**
-     * Create a new temporary file
+     * Delete the file on the filesystem
      *
      */
-    public static function temp() : self
-    {
-        $tmp = tmpfile();
-        $meta = stream_get_meta_data($tmp);
-
-        return new self($meta['uri']);
-    }
-
     public function delete()
     {
-        // TODO permissions?
         unlink($this->pathname);
     }
 
+    /**
+     * Delete contents of the file
+     *
+     */
     public function deleteContents()
     {
         file_put_contents($this->pathname, '');
     }
 
-    public function exists() : bool
-    {
-        return file_exists($this->pathname);
-    }
-
+    /**
+     * Check if the file has a given extension or no extension at all
+     *
+     */
     public function hasExtension(string $extension = null) : bool
     {
         $realExtension = $this->getExtension();
@@ -83,12 +88,7 @@ class File extends FilesystemObject implements \IteratorAggregate
             throw new FileNotFoundException($this->pathname);
         }
 
-        if($this->isDir()) {
-            throw new TargetNotFileException($this->pathname);
-        }
-
         $this->getPermissions()->validateStreamMode($mode);
-
         $stream = fopen($this->pathname, $mode);
 
         if($stream === false) {
@@ -97,16 +97,6 @@ class File extends FilesystemObject implements \IteratorAggregate
         }
 
         return $stream;
-    }
-
-    public function isDir() : bool
-    {
-        return is_dir($this->pathname);
-    }
-
-    public function isFile() : bool
-    {
-        return is_file($this->pathname);
     }
 
     /**
@@ -199,9 +189,11 @@ class File extends FilesystemObject implements \IteratorAggregate
     public function writeLines(FileLineIterator $lines)
     {
         $stream = $this->openStream('w');
+
         foreach($lines as $line) {
             fwrite($stream, $line->getContent());
         }
+
         fclose($stream);
     }
 
@@ -224,7 +216,6 @@ class File extends FilesystemObject implements \IteratorAggregate
             throw new PermissionException($msg, $destination);
         }
 
-        // TODO recursive, create destination?
         copy($this->pathname, $destination);
     }
 
@@ -242,5 +233,10 @@ class File extends FilesystemObject implements \IteratorAggregate
     public function isEmpty() : bool
     {
         return $this->getSize() === 0;
+    }
+
+    public function exists() : bool
+    {
+        return is_file($this->pathname);
     }
 }

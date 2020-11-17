@@ -23,18 +23,15 @@ PHP file manipulation using OOP.
 
 ## TODO
 
-* use file's real path for exceptions
 * FileLineIterator : seekable iterator or generator?
 
-* abstract parent class FilesystemObject
-    * extend to file
-    * extend to directory
+* add "rename" for sake of convenience
 
 
 * File
-    * test isEmpty
+    * implement iteratorAggregate, return generator to replace filelineiterator
 
-
-* download documentation package, brc command to edit?
-    * make note of string usage '' vs "", latter should only be used when
-      required by syntax (and instead of .)
+* cleanup
+    * go through methods and make sure there are permission checks when applicable
+    * use file's real path for exceptions?
+    * rename package to "Nonetallt\Filesystem" ?
