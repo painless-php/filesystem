@@ -23,8 +23,11 @@ PHP file manipulation using OOP.
 
 ## TODO
 
-* refactor FileLineIterator 
-    * seekable iterator or generator?
+* refactor 
+    * FileLineIterator 
+        * seekable iterator or generator?
+    * FileLine
+        * write method kind of sucks?
 
 * add "rename" for sake of convenience
 
