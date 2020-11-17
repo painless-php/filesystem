@@ -23,7 +23,8 @@ PHP file manipulation using OOP.
 
 ## TODO
 
-* FileLineIterator : seekable iterator or generator?
+* refactor FileLineIterator 
+    * seekable iterator or generator?
 
 * add "rename" for sake of convenience
 
