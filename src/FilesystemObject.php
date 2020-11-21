@@ -42,6 +42,15 @@ abstract class FilesystemObject
     }
 
     /**
+     * Get a string representation of the object (pathname)
+     *
+     */
+    public function __toString() : string
+    {
+        return $this->pathname;
+    }
+
+    /**
      * Check if this object is a directory
      *
      */
