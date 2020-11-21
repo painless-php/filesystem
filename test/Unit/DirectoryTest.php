@@ -3,17 +3,18 @@
 namespace Test\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Nonetallt\Filesystem\Concern\TestsFiles;
+use Nonetallt\Filesystem\Concern\DeletesTestOutput;
 use Nonetallt\Filesystem\Directory;
 use Nonetallt\Filesystem\Exception\FilesystemException;
+use Nonetallt\Filesystem\Filesystem;
 
 class DirectoryTest extends TestCase
 {
-    use TestsFiles;
+    use DeletesTestOutput;
 
     public function testCreateCreatesDirectory()
     {
-        $path = $this->getTestPath('output/directory');
+        $path = Filesystem::testDirectoryPath('output/directory');
         $dir = new Directory($path);
         $dir->create();
 
@@ -22,7 +23,7 @@ class DirectoryTest extends TestCase
 
     public function testCreateCreatesDirectoriesRecursively()
     {
-        $path = $this->getTestPath('output/foo/bar/baz');
+        $path = Filesystem::testDirectoryPath('output/foo/bar/baz');
         $dir = new Directory($path);
         $dir->create(true);
 
@@ -31,7 +32,7 @@ class DirectoryTest extends TestCase
 
     public function testCreateThrowsExceptionIfRecurseIsNotEnabled()
     {
-        $path = $this->getTestPath('output/foo/bar/baz');
+        $path = Filesystem::testDirectoryPath('output/foo/bar/baz');
         $dir = new Directory($path);
 
         $this->expectException(FilesystemException::class);
@@ -40,23 +41,23 @@ class DirectoryTest extends TestCase
 
     public function testExistsReturnsTrueWhenDirectoryExists()
     {
-        $dir = new Directory($this->getTestPath('input/directory'));
+        $dir = new Directory(Filesystem::testDirectoryPath('input/directory'));
         $this->assertTrue($dir->exists());
     }
 
     public function testExistsReturnsFalseWhenDirectoryDoesNotExists()
     {
-        $dir = new Directory($this->getTestPath('input/foo'));
+        $dir = new Directory(Filesystem::testDirectoryPath('input/foo'));
         $this->assertFalse($dir->exists());
     }
 
     public function testMoveRenamesDirectory()
     {
-        $oldPath = $this->getTestPath('output/old/1');
+        $oldPath = Filesystem::testDirectoryPath('output/old/1');
         $dir = new Directory($oldPath);
         $dir->create(true);
 
-        $newPath = $this->getTestPath('output/new/1');
+        $newPath = Filesystem::testDirectoryPath('output/new/1');
         $dir->move($newPath, true);
 
         $this->assertFalse(file_exists($oldPath));
@@ -65,12 +66,12 @@ class DirectoryTest extends TestCase
 
     public function testMoveMovesDirectoryContents()
     {
-        $oldPath = $this->getTestPath('output/foo');
+        $oldPath = Filesystem::testDirectoryPath('output/foo');
         $dir = new Directory($oldPath);
         $dir->create();
         file_put_contents("$oldPath/file", 'content');
 
-        $newPath = $this->getTestPath('output/bar');
+        $newPath = Filesystem::testDirectoryPath('output/bar');
         $dir->move($newPath);
 
         $this->assertFalse(file_exists("$oldPath/file"));
@@ -79,20 +80,20 @@ class DirectoryTest extends TestCase
 
     public function testGetSizeRecursiveReturnsCombinedSizeOfDirectoryAndItsContents()
     {
-        $dir = new Directory($this->getTestPath('input/size'));
+        $dir = new Directory(Filesystem::testDirectoryPath('input/size'));
         $this->assertEquals(9280, $dir->getSize());
     }
 
     public function testGetPathReturnsPathname()
     {
-        $path = $this->getTestPath('input/size');
+        $path = Filesystem::testDirectoryPath('input/size');
         $dir = new Directory($path);
         $this->assertEquals($path, $dir->getPath());
     }
 
     public function testDeleteContentsThrowsExceptionWhenTryingToDeleteNonEmptyDirWithoutRecursive()
     {
-        $path = $this->getTestPath('output/dir');
+        $path = Filesystem::testDirectoryPath('output/dir');
         $dir = new Directory($path);
         $dir->create();
         file_put_contents("$path/file", 'content');
@@ -103,7 +104,7 @@ class DirectoryTest extends TestCase
 
     public function testDeleteContentsDoesNotDeleteDirectoryItself()
     {
-        $path = $this->getTestPath('output/dir');
+        $path = Filesystem::testDirectoryPath('output/dir');
         $dir = new Directory($path);
         $dir->create();
         file_put_contents("$path/file", 'content');
@@ -115,7 +116,7 @@ class DirectoryTest extends TestCase
 
     public function testDeleteContentsDeletesDirectoryContents()
     {
-        $path = $this->getTestPath('output/dir');
+        $path = Filesystem::testDirectoryPath('output/dir');
         $dir = new Directory($path);
         $dir->create();
         file_put_contents("$path/file", 'content');
@@ -127,7 +128,7 @@ class DirectoryTest extends TestCase
 
     public function testDeleteDeletesDirectory()
     {
-        $path = $this->getTestPath('output/dir');
+        $path = Filesystem::testDirectoryPath('output/dir');
         $dir = new Directory($path);
         $dir->create();
         $dir->delete();
@@ -137,7 +138,7 @@ class DirectoryTest extends TestCase
 
     public function testRecursiveDeleteDeletesDirectoryContents()
     {
-        $path = $this->getTestPath('output/dir');
+        $path = Filesystem::testDirectoryPath('output/dir');
         $dir = new Directory($path);
         $dir->create();
         file_put_contents("$path/file", 'content');
@@ -148,7 +149,7 @@ class DirectoryTest extends TestCase
 
     public function testIsEmptyReturnsTrueWhenDirIsEmpty()
     {
-        $path = $this->getTestPath('output/dir');
+        $path = Filesystem::testDirectoryPath('output/dir');
         $dir = new Directory($path);
         $dir->create();
 
@@ -157,7 +158,7 @@ class DirectoryTest extends TestCase
 
     public function testIsEmptyReturnsFalseWhenDirHasFiles()
     {
-        $path = $this->getTestPath('output/dir');
+        $path = Filesystem::testDirectoryPath('output/dir');
         $dir = new Directory($path);
         $dir->create();
         file_put_contents("$path/file", 'content');
@@ -167,7 +168,7 @@ class DirectoryTest extends TestCase
 
     public function testIsEmptyReturnsFalseWhenDirHasDirectories()
     {
-        $path = $this->getTestPath('output/dir');
+        $path = Filesystem::testDirectoryPath('output/dir');
         $dir = new Directory($path);
         $dir->create();
         mkdir("$path/dir");

@@ -7,24 +7,25 @@ use Nonetallt\Filesystem\File;
 use Nonetallt\Filesystem\Exception\FileNotFoundException;
 use Nonetallt\Filesystem\Exception\TargetNotFileException;
 use Nonetallt\Filesystem\Exception\PermissionException;
-use Nonetallt\Filesystem\Concern\TestsFiles;
+use Nonetallt\Filesystem\Concern\DeletesTestOutput;
+use Nonetallt\Filesystem\Filesystem;
 
 class FileModificationTest extends TestCase
 {
-    use TestsFiles;
+    use DeletesTestOutput;
 
     private $file;
 
     public function setUp() : void
     {
         parent::setUp();
-        $this->file = new File($this->getTestPath('input/10_lines.txt'));
+        $this->file = new File(Filesystem::testDirectoryPath('input/10_lines.txt'));
     }
 
     private function copyToOutput(string $file) : File
     {
-        $source = new File($this->getTestPath("input/$file"));
-        $outputPath = $this->getTestPath("output/$file");
+        $source = new File(Filesystem::testDirectoryPath("input/$file"));
+        $outputPath = Filesystem::testDirectoryPath("output/$file");
         $source->copy($outputPath);
 
         return new File($outputPath);
@@ -32,7 +33,7 @@ class FileModificationTest extends TestCase
 
     public function testCopyCreatesFileWithCopiedContent()
     {
-        $outputPath = $this->getTestPath('output/10_lines.txt');
+        $outputPath = Filesystem::testDirectoryPath('output/10_lines.txt');
         $this->file->copy($outputPath);
         $output = new File($outputPath);
         $this->assertEquals($this->file->getContent(), $output->getContent());
@@ -42,7 +43,7 @@ class FileModificationTest extends TestCase
     {
         $file = $this->copyToOutput('10_lines.txt');
         $oldPath = $file->getPathname();
-        $file->move($this->getTestPath('output/new.txt'));
+        $file->move(Filesystem::testDirectoryPath('output/new.txt'));
 
         $this->assertFalse(file_exists($oldPath));
     }
@@ -50,7 +51,7 @@ class FileModificationTest extends TestCase
     public function testMoveCreatesNewFile()
     {
         $file = $this->copyToOutput('10_lines.txt');
-        $newPath = $this->getTestPath('output/new.txt');
+        $newPath = Filesystem::testDirectoryPath('output/new.txt');
         $file->move($newPath);
 
         $this->assertTrue(file_exists($newPath));

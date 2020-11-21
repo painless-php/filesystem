@@ -7,11 +7,12 @@ use Nonetallt\Filesystem\File;
 use Nonetallt\Filesystem\Exception\FileNotFoundException;
 use Nonetallt\Filesystem\Exception\TargetNotFileException;
 use Nonetallt\Filesystem\Exception\PermissionException;
-use Nonetallt\Filesystem\Concern\TestsFiles;
+use Nonetallt\Filesystem\Concern\DeletesTestOutput;
+use Nonetallt\Filesystem\Filesystem;
 
 class FileTest extends TestCase
 {
-    use TestsFiles;
+    use DeletesTestOutput;
 
 	private $file;
 
@@ -142,23 +143,23 @@ class FileTest extends TestCase
 
     public function testGetContentGetsFileContent()
     {
-        $input = new File($this->getTestPath('input/test.json'));
+        $input = new File(Filesystem::testDirectoryPath('input/test.json'));
         $this->assertEquals("[\"foobar\"]\n", $input->getContent());
     }
 
     public function testRenameCreatesFileAtNewPath()
     {
-        $path = $this->getTestPath('output/file');
+        $path = Filesystem::testDirectoryPath('output/file');
         $file = new File($path);
         $file->create();
         $file->rename('renamed_file');
 
-        $this->assertTrue(file_exists($this->getTestPath('output/renamed_file')));
+        $this->assertTrue(file_exists(Filesystem::testDirectoryPath('output/renamed_file')));
     }
 
     public function testRenameDeletesFileAtOldPath()
     {
-        $path = $this->getTestPath('output/file');
+        $path = Filesystem::testDirectoryPath('output/file');
         $file = new File($path);
         $file->create();
         $file->rename('renamed_file');
@@ -168,13 +169,13 @@ class FileTest extends TestCase
 
     public function testIsEmptyReturnsTrueForEmptyFile()
     {
-        $file = new File($this->getTestPath('input/empty.txt'));
+        $file = new File(Filesystem::testDirectoryPath('input/empty.txt'));
         $this->assertTrue($file->isEmpty());
     }
 
     public function testIsEmptyReturnsFalseForFileWithContent()
     {
-        $file = new File($this->getTestPath('input/10_lines.txt'));
+        $file = new File(Filesystem::testDirectoryPath('input/10_lines.txt'));
         $this->assertFalse($file->isEmpty());
     }
 }

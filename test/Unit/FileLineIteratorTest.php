@@ -4,18 +4,19 @@ namespace Test\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Nonetallt\Filesystem\File;
-use Nonetallt\Filesystem\Concern\TestsFiles;
+use Nonetallt\Filesystem\Concern\DeletesTestOutput;
+use Nonetallt\Filesystem\Filesystem;
 
 class FileLineIteratorTest extends TestCase
 {
-    use TestsFiles;
+    use DeletesTestOutput;
 
     private $file;
 
     public function setUp() : void
     {
         parent::setUp();
-        $this->file = new File($this->getTestPath('input/10_lines.txt'));
+        $this->file = new File(Filesystem::testDirectoryPath('input/10_lines.txt'));
     }
 
     public function testIteratorIteratesAllLinesInTheFile()
