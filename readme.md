@@ -6,7 +6,10 @@ PHP file manipulation using OOP.
 
 #### Core
 
-* Nonetallt\Filesystem\File
+* Nonetallt\Filesystem\Filesystem
+* Nonetallt\Filesystem\FilesystemObject
+    * Nonetallt\Filesystem\File
+    * Nonetallt\Filesystem\Directory
 * Nonetallt\Filesystem\FilesystemPermissions
 
 #### Testing
