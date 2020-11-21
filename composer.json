@@ -4,7 +4,7 @@
     "type": "project",
     "require": {
         "php": ">=7.1",
-        "nonetallt/string": "^1.0"
+        "nonetallt/string": "^1.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.1",
