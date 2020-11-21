@@ -32,7 +32,8 @@ Note that this package uses the following env variables for testing:
 ## TODO
 
 * Test
-    * test getAbsolutePath() conversions
+    * getAbsolutePath() conversions
+    * directory delete relative and absolute exclusion patterns
 
 * refactor 
     * FileLineIterator 
