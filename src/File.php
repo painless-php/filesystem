@@ -124,7 +124,9 @@ class File extends FilesystemObject implements \IteratorAggregate
 
     public function getExtension() : ?string
     {
-        $parts = explode('.', $this->pathname);
+        $name = Str::removeLeading($this->getName(), '.');
+
+        $parts = explode('.', $name, 2);
         $partsCount = count($parts);
 
         /* File does not have an extension */
@@ -138,14 +140,15 @@ class File extends FilesystemObject implements \IteratorAggregate
         return dirname($this->pathname);
     }
 
-    public function getPathname() : string
+    /**
+     * Get the filename without extension 
+     *
+     * use getName() to get filename with extension
+     *
+     */
+    public function getBaseName() : string
     {
-        return $this->pathname;
-    }
-
-    public function getRealPath() : string
-    {
-        return realpath($this->pathname);
+        return basename($this->pathname, '.' . $this->getExtension());
     }
 
     public function getContent() : string

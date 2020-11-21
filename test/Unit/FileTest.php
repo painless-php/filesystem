@@ -64,6 +64,18 @@ class FileTest extends TestCase
         $this->assertEquals('php', $this->file->getExtension());
     }
 
+    public function testGetExtensionWorksForDotfiles()
+    {
+        $file = new File('.env');
+        $this->assertNull($file->getExtension());
+    }
+
+    public function testGetExtensionWorksWithFilesThatHaveMultipleExtensions()
+    {
+        $file = new File('index.blade.php');
+        $this->assertEquals('blade.php', $file->getExtension());
+    }
+
     public function testOpenStreamOpensResourceHandleWhenFileExists()
     {
         $this->assertTrue(is_resource($this->file->openStream('r')));
@@ -177,5 +189,17 @@ class FileTest extends TestCase
     {
         $file = new File(Filesystem::testDirectoryPath('input/10_lines.txt'));
         $this->assertFalse($file->isEmpty());
+    }
+
+    public function testGetNameReturnsFilenameWithExtension()
+    {
+        $file = new File('/foo/bar/home.blade.php');
+        $this->assertEquals('home.blade.php', $file->getName());
+    }
+
+    public function testGetBaseNameReturnsFilenameWithoutExtension()
+    {
+        $file = new File('/foo/bar/home.blade.php');
+        $this->assertEquals('home', $file->getBaseName());
     }
 }

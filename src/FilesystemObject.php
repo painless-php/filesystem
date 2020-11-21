@@ -87,6 +87,15 @@ abstract class FilesystemObject
     }
 
     /**
+     * Get name of the object
+     *
+     */
+    public function getName() : string
+    {
+        return basename($this->pathname);
+    }
+
+    /**
      * Get the parent directory of this object
      *
      * @return Directory|null The parent directory or null if the object
@@ -105,7 +114,7 @@ abstract class FilesystemObject
     abstract public function exists() : bool;
 
     /**
-     * Get the size of the objec in filesystem in bytes
+     * Get the size of the object in filesystem in bytes
      *
      * @return int $size filesize in bytes
      *

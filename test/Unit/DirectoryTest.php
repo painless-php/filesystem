@@ -175,4 +175,10 @@ class DirectoryTest extends TestCase
 
         $this->assertFalse($dir->isEmpty());
     }
+
+    public function testGetNameReturnsNameOfTheDirectory()
+    {
+        $dir = new Directory('/foo/bar/baz/dir');
+        $this->assertEquals('dir', $dir->getName());
+    }
 }
