@@ -232,7 +232,7 @@ class File extends FilesystemObject implements \IteratorAggregate
 
     public function rename(string $name)
     {
-        $this->move($this->getPath() . DIRECTORY_SEPARATOR . $name);
+        $this->move($this->getPath() . "/$name");
     }
 
     public function isEmpty() : bool

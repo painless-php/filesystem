@@ -35,10 +35,10 @@ class Filesystem
 
         $choices = [
             // Path when used by this package
-            dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . $file,
+            dirname(__DIR__) . "/vendor/$file",
 
             // Path when another package is using this package
-            dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . $file,
+            dirname(__DIR__, 3) . "/$file",
         ];
 
         foreach ($choices as $path) {
@@ -60,8 +60,6 @@ class Filesystem
     public static function projectDirectoryPath(string $append = null) : string
     {
         if(static::$projectPath === null) {
-
-            var_dump('foo');
             try {
                 $autoloaderPath = static::composerAutoloaderPath();
                 static::$projectPath = dirname($autoloaderPath, 2);
@@ -109,12 +107,31 @@ class Filesystem
      * Append to the given filesystem path
      *
      */
-    public static  function appendToPath(string $path, ?string $append) : string
+    public static function appendToPath(string $path, string $append = null) : string
     {
         if($append === null) {
-            return Str::removeSuffix($path, DIRECTORY_SEPARATOR);
+            return Str::removeSuffix($path, '/');
         }
 
-        return Str::addSuffix($path, DIRECTORY_SEPARATOR) . $append;
+        return Str::addSuffix($path, '/') . $append;
+    }
+
+    /**
+     * Get the home directory of the current user
+     *
+     * @throws FilesystemException
+     *
+     */
+    public static function homeDirectoryPath(string $append = null) : string
+    {
+        $home = getenv('HOME');
+
+        if($home === false) {
+            $user = get_current_user();
+            $msg = "Could not resolve home directory of user '$user'";
+            throw new FilesystemException($msg);
+        }
+
+        return static::appendToPath($home, $append);
     }
 }

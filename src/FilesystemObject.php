@@ -2,7 +2,8 @@
 
 namespace Nonetallt\Filesystem;
 
-use Nonetallt\File\Exception\FilesystemException;
+use Nonetallt\String\Str;
+use Nonetallt\Filesystem\Exception\FilesystemException;
 
 /**
  * Meta object describing all filesystem entities. The object itself only
@@ -87,12 +88,49 @@ abstract class FilesystemObject
     }
 
     /**
-     * Get the real path of the object
+     * Get the real path of the object. This method doesn't use the native
+     * realpath() function because realpath() won't work with files that don't exist.
      *
      */
-    public function getRealPath() : string
+    public function getAbsolutePath() : string
     {
-        return realpath($this->pathname);
+		$path = str_replace('\\', '/', $this->pathname);
+
+        if(Str::startsWith($path, '~')) {
+            $pathAfterHome = substr($path, 1);
+
+            if($pathAfterHome !== '') {
+                $pathAfterHome = Str::addPrefix($pathAfterHome, '/');
+            }
+
+            $path = Filesystem::homeDirectoryPath() . $pathAfterHome;
+        }
+
+        if (strpos($path, '..') === false) {
+            return $path;
+        }
+
+        $first = '';
+        $parts = explode('/', $path);
+        if ($filter) {
+            $first = $path[0] === '/' ? '/' : '';
+            $parts = array_filter($parts, 'strlen');
+        }
+
+        $absolutes = [];
+        foreach ($parts as $part) {
+            if ('.' === $part) {
+                continue;
+            }
+
+            if ('..' === $part) {
+                array_pop($absolutes);
+            } else {
+                $absolutes[] = $part;
+            }
+        }
+
+        return $first . implode('/', $absolutes);
     }
 
     /**
@@ -102,6 +140,26 @@ abstract class FilesystemObject
     public function getName() : string
     {
         return basename($this->pathname);
+    }
+
+    /**
+     * Get the path of this object in relation to another path. An exception
+     * will be thrown If the given path is not a parent path of this object
+     *
+     * @throws FilesystemException
+     *
+     */
+    public function getRelativePath(string $parentPath) : string
+    {
+        $path = $this->getAbsolutePath();
+        $parentPath = Str::addSuffix($parentPath, '/');
+
+        if(! Str::startsWith($path, $parentPath)) {
+            $msg = "Path {$path} is not relative to parent path '$parentPath'";
+            throw new FilesystemException($msg);
+        }
+
+        return substr($path, strlen($parentPath));
     }
 
     /**

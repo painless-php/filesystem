@@ -9,7 +9,7 @@ class FilesystemTest extends TestCase
 {
     public function testComposerAutoloaderPathReturnsExpectedPath()
     {
-        $expected = implode(DIRECTORY_SEPARATOR, [
+        $expected = implode('/', [
             dirname(__DIR__, 2),
             'vendor',
             'autoload.php'
@@ -25,7 +25,7 @@ class FilesystemTest extends TestCase
 
     public function testTestDirectoryPathReturnsExpectedPath()
     {
-        $expected = implode(DIRECTORY_SEPARATOR, [
+        $expected = implode('/', [
             dirname(__DIR__, 2),
             'test'
         ]);
@@ -38,7 +38,12 @@ class FilesystemTest extends TestCase
         $path = __DIR__;
         $append = 'foo/bar/baz';
 
-        $expected = $path . DIRECTORY_SEPARATOR . $append;
+        $expected = "$path/$append";
         $this->assertEquals($expected, Filesystem::appendToPath($path, $append));
+    }
+
+    public function testHomeDirectoryPathReturnsCurrentUserHomeDir()
+    {
+        $this->assertEquals($_ENV['REAL_HOME'], Filesystem::homeDirectoryPath());
     }
 }

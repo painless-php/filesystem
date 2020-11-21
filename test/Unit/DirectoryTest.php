@@ -147,6 +147,21 @@ class DirectoryTest extends TestCase
         $this->assertFalse(file_exists("$path/file"));
     }
 
+    public function testDeleteSparesExcludedDirectoryContents()
+    {
+        $path = Filesystem::testDirectoryPath('output/dir');
+        $dir = new Directory($path);
+        $dir->create();
+        file_put_contents("$path/foo", '');
+        file_put_contents("$path/bar", '');
+        file_put_contents("$path/baz", '');
+
+        $dir->delete(true, ['bar', 'baz']);
+        $this->assertFalse(file_exists("$path/foo"));
+        $this->assertTrue(file_exists("$path/bar"));
+        $this->assertTrue(file_exists("$path/baz"));
+    }
+
     public function testIsEmptyReturnsTrueWhenDirIsEmpty()
     {
         $path = Filesystem::testDirectoryPath('output/dir');

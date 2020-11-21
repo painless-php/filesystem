@@ -36,7 +36,7 @@ trait DeletesTestOutput
         ];
 
         foreach(array_diff(scandir($dirPath), $exclude) as $relativePath) {
-            $realPath = $dirPath . DIRECTORY_SEPARATOR . $relativePath;
+            $realPath = "$dirPath/$relativePath";
 
             if(is_dir($realPath)) {
                 $this->deleteDirectory($realPath, true);

@@ -79,7 +79,7 @@ class Directory extends FilesystemObject
         (new Directory($destination))->create($recursive);
 
         foreach($this->getChildren() as $object) {
-            $object->copy($destination . DIRECTORY_SEPARATOR . basename($object->getPathname()));
+            $object->copy("$destination/" . basename($object->getPathname()));
             $object->delete();
         }
     }
@@ -108,31 +108,81 @@ class Directory extends FilesystemObject
     /**
      * Delete filesystem object
      *
+     ** @param bool $recursive Whether subdirectories and their contents should be
+     * deleted recursively 
+     *
+     * @param array|string $exclude List of file / directory names to save from
+     * deletion
+     *
+     ** @param string|null $root path to the topmost level, should not be used
+     * outside class
+     *
+     * @return bool $deleted Whether the directory was actually deleted
+     * (some files may be spared if $exclude parameter is used)
+     *
      */
-    public function delete(bool $recursive = false)
+    public function delete(bool $recursive = false, array $exclude = [], string $root = null) : bool
     {
         if(! $this->isEmpty() && ! $recursive) {
             $msg = "Directory is not empty, please use the recursive parameter if you wish to delete the directory along with it's contents";
             throw new FilesystemException($msg, $this->pathname);
         }
 
-        $this->deleteContents(true);
-        rmdir($this->pathname);
+        if($this->deleteContents(true, $exclude)) {
+            rmdir($this->pathname);
+            return true;
+        }
+
+        return false;
     }
 
     /**
      * Delete contents of the object.
      *
-     * @param bool $recursive 
+     * @param bool $recursive Whether contents of subdirectories should be
+     * deleted recursively 
+     *
+     * @param array|string $exclude List of file / directory names to save from
+     * deletion
+     *
+     * @param string|null $root path to the topmost level, should not be used
+     * outside class
+     *
+     * @return bool $isEmpty Whether directory is empty after deletion (some
+     * files may be spared if $exclude parameter is used)
      e
      */
-    public function deleteContents(bool $recursive = false)
+    public function deleteContents(bool $recursive = false, array $exclude = [], string $root = null) : bool
     {
+        if($root === null) {
+            $root = $this->getAbsolutePath();
+        }
+
+        $isEmpty = true;
+
         foreach($this->getChildren() as $object) {
-            if($object->isFile() || ($object->isDirectory() && $recursive)) {
-                $object->delete(true);
+
+            // Skip deletion of non recursive dirs
+            if($object->isDirectory() && ! $recursive) {
+                continue;
+            }
+
+            // Skip deletion of excluded files
+            if(
+                in_array($object->getName(), $exclude) ||
+                in_array($object->getRelativePath($root), $exclude) ||
+                in_array($object->getAbsolutePath(), $exclude)
+            ) {
+                $isEmpty = false;
+                continue;
+            }
+
+            if($object->delete(true, $exclude)) {
+                $isEmpty = false;
             }
         }
+
+        return $isEmpty;
     }
 
     /**
@@ -157,7 +207,7 @@ class Directory extends FilesystemObject
         $children = [];
 
         foreach(array_diff(scandir($this->pathname), ['.', '..']) as $relativePath) {
-            $realPath = $this->pathname . DIRECTORY_SEPARATOR . $relativePath;
+            $realPath = "$this->pathname/$relativePath";
             $child = is_file($realPath) ? new File($realPath) : new Directory($realPath);
             $children[] = $child;
         }
@@ -180,7 +230,7 @@ class Directory extends FilesystemObject
      */
     public function rename(string $newName)
     {
-        $this->move(dirname($this->pathname) . DIRECTORY_SEPARATOR . $newName, true);
+        $this->move(dirname($this->pathname) . "/$newName", true);
     }
 }
 

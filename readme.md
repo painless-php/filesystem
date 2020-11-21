@@ -24,7 +24,15 @@ PHP file manipulation using OOP.
     * Nonetallt\Filesystem\Exception\TargetNotDirectoryException
     * Nonetallt\Filesystem\Exception\TargetNotFileException
 
+## Development
+
+Note that this package uses the following env variables for testing:
+* REAL_HOME
+
 ## TODO
+
+* Test
+    * test getAbsolutePath() conversions
 
 * refactor 
     * FileLineIterator 
@@ -35,6 +43,9 @@ PHP file manipulation using OOP.
 * File
     * implement iteratorAggregate, return generator to replace
       filelineiterator?
+
+* Directory
+    * allow deletion exclusion by relative path and absolute path
 
 * cleanup
     * go through methods and make sure there are permission checks when applicable

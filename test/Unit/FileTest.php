@@ -202,4 +202,23 @@ class FileTest extends TestCase
         $file = new File('/foo/bar/home.blade.php');
         $this->assertEquals('home', $file->getBaseName());
     }
+
+    public function testGetRelativePathReturnsRelativePath()
+    {
+        $file = new File('/foo/bar/baz/file');
+        $this->assertEquals('baz/file', $file->getRelativePath('/foo/bar'));
+    }
+
+    public function testGetAbsolutePathConvertsLeadingTildeToHome()
+    {
+        $file = new File('~');
+        $this->assertEquals($_ENV['REAL_HOME'], $file->getAbsolutePath());
+    }
+
+    public function testGetAbsolutePathConvertsLeadingTildeWithPath()
+    {
+        $file = new File('~/foo/bar');
+        $expected = $_ENV['REAL_HOME'] . '/foo/bar';
+        $this->assertEquals($expected, $file->getAbsolutePath());
+    }
 }
