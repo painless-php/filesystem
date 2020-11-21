@@ -14,7 +14,7 @@ PHP file manipulation using OOP.
 
 #### Testing
 
-* Nonetallt\Filesystem\Concern\TestsFiles
+* Nonetallt\Filesystem\Concern\DeletesTestOutput
 
 #### Exception
 
