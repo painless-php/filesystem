@@ -21,7 +21,7 @@ trait DeletesTestOutput
      * @after
      *
      */
-    protected function cleanOutput()
+    protected function deleteTestOutput()
     {
         $this->deleteDirectory(Filesystem::testDirectoryPath('output'), false);
     }
