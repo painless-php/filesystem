@@ -130,7 +130,9 @@ class File extends FilesystemObject implements \IteratorAggregate
         $partsCount = count($parts);
 
         /* File does not have an extension */
-        if($partsCount < 2) return null;
+        if($partsCount < 2) {
+            return null;
+        } 
 
         return $parts[$partsCount - 1];
     }
