@@ -6,20 +6,20 @@ PHP file manipulation using OOP.
 
 #### Core
 
-* Nonetallt\File\File
-* Nonetallt\File\FilesystemPermissions
+* Nonetallt\Filesystem\File
+* Nonetallt\Filesystem\FilesystemPermissions
 
 #### Testing
 
-* Nonetallt\File\Concern\TestsFiles
+* Nonetallt\Filesystem\Concern\TestsFiles
 
 #### Exception
 
-* Nonetallt\File\Exception\FilesystemException
-    * Nonetallt\File\Exception\FileNotFoundException
-    * Nonetallt\File\Exception\PermissionException
-    * Nonetallt\File\Exception\TargetNotDirectoryException
-    * Nonetallt\File\Exception\TargetNotFileException
+* Nonetallt\Filesystem\Exception\FilesystemException
+    * Nonetallt\Filesystem\Exception\FileNotFoundException
+    * Nonetallt\Filesystem\Exception\PermissionException
+    * Nonetallt\Filesystem\Exception\TargetNotDirectoryException
+    * Nonetallt\Filesystem\Exception\TargetNotFileException
 
 ## TODO
 
@@ -29,13 +29,10 @@ PHP file manipulation using OOP.
     * FileLine
         * write method kind of sucks?
 
-* add "rename" for sake of convenience
-
-
 * File
-    * implement iteratorAggregate, return generator to replace filelineiterator
+    * implement iteratorAggregate, return generator to replace
+      filelineiterator?
 
 * cleanup
     * go through methods and make sure there are permission checks when applicable
     * use file's real path for exceptions?
-    * rename package to "Nonetallt\Filesystem" ?

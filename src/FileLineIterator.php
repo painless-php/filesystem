@@ -1,6 +1,6 @@
 <?php
 
-namespace Nonetallt\File;
+namespace Nonetallt\Filesystem;
 
 use Nonetallt\String\Str;
 

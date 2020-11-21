@@ -1,6 +1,6 @@
 {
-    "name": "nonetallt/file",
-    "description": "OOP file class and related code for PHP.",
+    "name": "nonetallt/filesystem",
+    "description": "Filesystem manipulation functionality",
     "type": "project",
     "require": {
         "php": ">=7.1",
@@ -14,7 +14,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Nonetallt\\File\\": "src/"
+            "Nonetallt\\Filesystem\\": "src/"
         }
     },
     "autoload-dev": {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Nonetallt\File;
+namespace Nonetallt\Filesystem;
 
-use Nonetallt\File\FilesystemObject;
-use Nonetallt\File\Exception\PermissionException;
-use Nonetallt\File\Exception\FileNotFoundException;
-use Nonetallt\File\Exception\FilesystemException;
+use Nonetallt\Filesystem\FilesystemObject;
+use Nonetallt\Filesystem\Exception\PermissionException;
+use Nonetallt\Filesystem\Exception\FileNotFoundException;
+use Nonetallt\Filesystem\Exception\FilesystemException;
 
 class Directory extends FilesystemObject
 {

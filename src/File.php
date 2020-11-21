@@ -1,11 +1,11 @@
 <?php
 
-namespace Nonetallt\File;
+namespace Nonetallt\Filesystem;
 
-use Nonetallt\File\Exception\FilesystemException;
-use Nonetallt\File\Exception\FileNotFoundException;
-use Nonetallt\File\Exception\PermissionException;
-use Nonetallt\File\FilesystemPermissions;
+use Nonetallt\Filesystem\Exception\FilesystemException;
+use Nonetallt\Filesystem\Exception\FileNotFoundException;
+use Nonetallt\Filesystem\Exception\PermissionException;
+use Nonetallt\Filesystem\FilesystemPermissions;
 use Nonetallt\String\Str;
 
 class File extends FilesystemObject implements \IteratorAggregate

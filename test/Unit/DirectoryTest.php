@@ -3,9 +3,9 @@
 namespace Test\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Nonetallt\File\Concern\TestsFiles;
-use Nonetallt\File\Directory;
-use Nonetallt\File\Exception\FilesystemException;
+use Nonetallt\Filesystem\Concern\TestsFiles;
+use Nonetallt\Filesystem\Directory;
+use Nonetallt\Filesystem\Exception\FilesystemException;
 
 class DirectoryTest extends TestCase
 {

@@ -3,8 +3,8 @@
 namespace Test\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Nonetallt\File\File;
-use Nonetallt\File\Concern\TestsFiles;
+use Nonetallt\Filesystem\File;
+use Nonetallt\Filesystem\Concern\TestsFiles;
 
 class FileLineTest extends TestCase
 {

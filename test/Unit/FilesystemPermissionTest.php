@@ -3,7 +3,7 @@
 namespace Test\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Nonetallt\File\FilesystemPermissions;
+use Nonetallt\Filesystem\FilesystemPermissions;
 
 class FilesystemPermissionsTest extends TestCase
 {

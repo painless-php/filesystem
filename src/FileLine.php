@@ -1,8 +1,8 @@
 <?php
 
-namespace Nonetallt\File;
+namespace Nonetallt\Filesystem;
 
-use Nonetallt\File\Exception\FilesystemException;
+use Nonetallt\Filesystem\Exception\FilesystemException;
 
 class FileLine
 {

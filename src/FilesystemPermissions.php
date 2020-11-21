@@ -1,8 +1,8 @@
 <?php
 
-namespace Nonetallt\File;
+namespace Nonetallt\Filesystem;
 
-use Nonetallt\File\Exception\PermissionException;
+use Nonetallt\Filesystem\Exception\PermissionException;
 
 class FilesystemPermissions
 {

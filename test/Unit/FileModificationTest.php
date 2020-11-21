@@ -3,11 +3,11 @@
 namespace Test\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Nonetallt\File\File;
-use Nonetallt\File\Exception\FileNotFoundException;
-use Nonetallt\File\Exception\TargetNotFileException;
-use Nonetallt\File\Exception\PermissionException;
-use Nonetallt\File\Concern\TestsFiles;
+use Nonetallt\Filesystem\File;
+use Nonetallt\Filesystem\Exception\FileNotFoundException;
+use Nonetallt\Filesystem\Exception\TargetNotFileException;
+use Nonetallt\Filesystem\Exception\PermissionException;
+use Nonetallt\Filesystem\Concern\TestsFiles;
 
 class FileModificationTest extends TestCase
 {

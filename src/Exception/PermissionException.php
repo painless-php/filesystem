@@ -1,6 +1,6 @@
 <?php
 
-namespace Nonetallt\File\Exception;
+namespace Nonetallt\Filesystem\Exception;
 
 class PermissionException extends FilesystemException
 {
