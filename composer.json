@@ -2,6 +2,8 @@
     "name": "painless-php/filesystem",
     "type": "library",
     "description": "Filesystem helper functionality",
+    "keywords": ["file", "directory", "filesystem", "iterator", "helpers"],
+    "license": "MIT",
     "require": {
         "php": ">=8.0",
         "ext-mbstring": "*"
