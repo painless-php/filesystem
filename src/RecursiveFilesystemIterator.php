@@ -12,7 +12,6 @@ class RecursiveFilesystemIterator implements Iterator
 {
     private string $path;
     private int $currentKey;
-    private string $currentDir;
     private RecursiveDirectoryIterator $currentIterator;
     private bool $skipNext;
     private array $dirsToScan;
@@ -86,7 +85,6 @@ class RecursiveFilesystemIterator implements Iterator
 
     public function rewind(): void
     {
-        $this->currentDir = $this->path;
         $this->currentKey = 0;
         $this->skipNext = false;
         $this->dirsToScan = [];
