@@ -82,7 +82,7 @@ class FileLineIterator implements SeekableIterator
     public function get(int $offset = 0, int $limit = null, bool $readBlank = false, bool $stripLineEndings = true) : array
     {
         $lines = [];
-        $this->read(static function($line, $lineNumber) use ($offset, $limit, &$lines) {
+        $this->read(static function($line, $lineNumber) use ($offset, &$lines, $limit) {
 
             /* Only capture lines after offset */
             if($lineNumber > $offset) {
