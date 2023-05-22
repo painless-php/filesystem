@@ -163,12 +163,12 @@ class File extends FilesystemObject implements IteratorAggregate
 
         if(! $this->isReadable()) {
             $path = $this->getRealPath();
-            $msg = "Copy source '$path' is not readable";
+            $msg = "Copy source '{$path}' is not readable";
             throw new FilesystemPermissionException($msg);
         }
 
         if(is_writable($destinationPath)) {
-            $msg = "Copy destination '$destinationPath' is not writable";
+            $msg = "Copy destination '{$destinationPath}' is not writable";
             throw new FilesystemPermissionException($msg);
         }
 
@@ -183,7 +183,7 @@ class File extends FilesystemObject implements IteratorAggregate
 
     public function rename(string $name)
     {
-        $this->move($this->getPath() . "/$name");
+        $this->move($this->getPath() . "/{$name}");
     }
 
     public function isEmpty() : bool

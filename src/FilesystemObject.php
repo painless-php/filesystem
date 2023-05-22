@@ -110,7 +110,7 @@ abstract class FilesystemObject extends SplFileInfo
         $parentPath = str_ends_with($parentPath, DIRECTORY_SEPARATOR) ? $parentPath : $parentPath . DIRECTORY_SEPARATOR;
 
         if(! str_starts_with($path, $parentPath)) {
-            $msg = "Path '$path' is not relative to parent path '$parentPath'";
+            $msg = "Path '{$path}' is not relative to parent path '{$parentPath}'";
             throw new FilesystemException($msg);
         }
 

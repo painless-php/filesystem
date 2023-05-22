@@ -79,7 +79,7 @@ class Directory extends FilesystemObject
         (new Directory($destination))->create($recursive);
 
         foreach($this->getContents() as $object) {
-            $object->copy("$destination/" . basename($object->getPathname()()));
+            $object->copy("{$destination}/" . basename($object->getPathname()()));
             $object->delete();
         }
     }
@@ -196,7 +196,7 @@ class Directory extends FilesystemObject
         $children = [];
 
         foreach(array_diff(scandir($this->getPathname()), ['.', '..']) as $relativePath) {
-            $realPath = "{$this->getPathname()}/$relativePath";
+            $realPath = "{$this->getPathname()}/{$relativePath}";
             $child = is_file($realPath) ? new File($realPath) : new Directory($realPath);
             $children[] = $child;
         }
@@ -219,6 +219,6 @@ class Directory extends FilesystemObject
      */
     public function rename(string $newName)
     {
-        $this->move(dirname($this->getPathname()) . "/$newName", true);
+        $this->move(dirname($this->getPathname()) . "/{$newName}", true);
     }
 }

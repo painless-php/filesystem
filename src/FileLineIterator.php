@@ -132,7 +132,7 @@ class FileLineIterator implements SeekableIterator
         $size = $this->file->getSize();
 
         if($position > $size) {
-            $msg = "Seek position $position is greater than file size $size";
+            $msg = "Seek position {$position} is greater than file size {$size}";
             throw new OutOfBoundsException($msg);
         }
 

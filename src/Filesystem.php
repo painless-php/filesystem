@@ -34,10 +34,10 @@ class Filesystem
 
         $choices = [
             // Path when used by this package
-            dirname(__DIR__) . "/vendor/$file",
+            dirname(__DIR__) . "/vendor/{$file}",
 
             // Path when another package is using this package
-            dirname(__DIR__, 3) . "/$file",
+            dirname(__DIR__, 3) . "/{$file}",
         ];
 
         foreach ($choices as $path) {
@@ -135,7 +135,7 @@ class Filesystem
 
         if($home === false) {
             $user = get_current_user();
-            $msg = "Could not resolve home directory of user '$user'";
+            $msg = "Could not resolve home directory of user '{$user}'";
             throw new FilesystemException($msg);
         }
 

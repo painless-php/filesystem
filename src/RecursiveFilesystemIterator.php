@@ -40,7 +40,7 @@ class RecursiveFilesystemIterator implements Iterator
     private function setPath(string $path)
     {
         if(! is_dir($path)) {
-            $msg = "Given path '$path' is not a directory.";
+            $msg = "Given path '{$path}' is not a directory.";
             throw new InvalidArgumentException($msg);
         }
 
