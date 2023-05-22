@@ -39,7 +39,7 @@ class Directory extends FilesystemObject
                 throw new FileNotFoundException($msg, $parentDir);
             }
 
-            (new Directory($parentDir))->create(true);
+            (new self($parentDir))->create(true);
         }
 
         if(! is_writable($parentDir)) {
@@ -76,7 +76,7 @@ class Directory extends FilesystemObject
      */
     public function copy(string $destination, bool $recursive = false)
     {
-        (new Directory($destination))->create($recursive);
+        (new self($destination))->create($recursive);
 
         foreach($this->getContents() as $object) {
             $object->copy("{$destination}/" . basename($object->getPathname()()));
@@ -197,7 +197,7 @@ class Directory extends FilesystemObject
 
         foreach(array_diff(scandir($this->getPathname()), ['.', '..']) as $relativePath) {
             $realPath = "{$this->getPathname()}/{$relativePath}";
-            $child = is_file($realPath) ? new File($realPath) : new Directory($realPath);
+            $child = is_file($realPath) ? new File($realPath) : new self($realPath);
             $children[] = $child;
         }
 

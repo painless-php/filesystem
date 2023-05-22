@@ -134,14 +134,14 @@ class File extends FilesystemObject implements IteratorAggregate
      * @param string|File|FileLineIterator $content
      *
      */
-    public function write(string|File|FileLineIterator $content)
+    public function write(string|self|FileLineIterator $content)
     {
         if(is_string($content)) {
             file_put_contents($this->getPathname(), $content);
             return;
         }
 
-        $this->writeLines($content instanceof File ? $content->getLines() : $content);
+        $this->writeLines($content instanceof self ? $content->getLines() : $content);
     }
 
     public function writeLines(FileLineIterator $lines)

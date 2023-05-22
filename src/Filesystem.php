@@ -96,7 +96,7 @@ class Filesystem
         if(static::$testDirPath === null) {
             $choices = implode(PHP_EOL, $choices);
             $msg = "Could not find a valid testing directory from following choices:" . PHP_EOL . $choices;
-            throw new FilesystemException($msg, Filesystem::projectDirectoryPath());
+            throw new FilesystemException($msg, self::projectDirectoryPath());
         }
 
         return static::appendToPath(static::$testDirPath, $append);
