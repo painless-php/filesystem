@@ -2,7 +2,6 @@
 
 namespace PainlessPHP\Filesystem;
 
-use PainlessPHP\Filesystem\FilesystemObject;
 use PainlessPHP\Filesystem\Exception\FilesystemPermissionException;
 use PainlessPHP\Filesystem\Exception\FileNotFoundException;
 use PainlessPHP\Filesystem\Exception\FilesystemException;
