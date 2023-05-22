@@ -19,7 +19,8 @@ class Directory extends FilesystemObject
         if(is_dir($this->getPathname())) {
             return;
         }
-        else if(is_file($this->getPathname())) {
+
+        if(is_file($this->getPathname())) {
             $msg = "A file with this name already exists";
             throw new FilesystemException($msg, $this->getPathname());
         }
