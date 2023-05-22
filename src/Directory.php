@@ -110,7 +110,7 @@ class Directory extends FilesystemObject
      * (some files may be spared if $exclude parameter is used)
      *
      */
-    public function delete(bool $recursive = false, array $exclude = [], string $root = null) : bool
+    public function delete(bool $recursive = false, array $exclude = [], ?string $root = null) : bool
     {
         if(! $recursive && ! $this->isEmpty()) {
             $msg = "Directory is not empty, please use the recursive parameter if you wish to delete the directory along with it's contents";
@@ -141,7 +141,7 @@ class Directory extends FilesystemObject
      * files may be spared if $exclude parameter is used)
      e
      */
-    public function deleteContents(bool $recursive = false, array $exclude = [], string $root = null) : bool
+    public function deleteContents(bool $recursive = false, array $exclude = [], ?string $root = null) : bool
     {
         if($root === null) {
             $root = $this->getAbsolutePath();

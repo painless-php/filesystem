@@ -57,7 +57,7 @@ class File extends FilesystemObject implements IteratorAggregate
      * Check if the file has a given extension or no extension at all
      *
      */
-    public function hasExtension(string $extension = null) : bool
+    public function hasExtension(?string $extension = null) : bool
     {
         $realExtension = $this->getExtension();
 

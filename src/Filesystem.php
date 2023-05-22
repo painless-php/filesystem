@@ -56,7 +56,7 @@ class Filesystem
      * @throws FilesystemException
      *
      */
-    public static function projectDirectoryPath(string $append = null) : string
+    public static function projectDirectoryPath(?string $append = null) : string
     {
         if(static::$projectPath === null) {
             try {
@@ -78,7 +78,7 @@ class Filesystem
      * @throws FilesystemException
      *
      */
-    public static function testDirectoryPath(string $append = null) : string
+    public static function testDirectoryPath(?string $append = null) : string
     {
         $choices = ['test', 'tests'];
 
@@ -129,7 +129,7 @@ class Filesystem
      * @throws FilesystemException
      *
      */
-    public static function homeDirectoryPath(string $append = null) : string
+    public static function homeDirectoryPath(?string $append = null) : string
     {
         $home = getenv('HOME');
 
