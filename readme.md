@@ -35,6 +35,8 @@ Note that this package uses the following env variables for testing:
 
 ## TODO
 
+* Make sure that proper errors are thrown when trying to operate on a non-existent file
+
 * Test
     * getAbsolutePath() conversions
     * directory delete relative and absolute exclusion patterns
