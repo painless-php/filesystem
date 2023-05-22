@@ -14,13 +14,13 @@ class Filesystem
      * Path of the current project
      *
      */
-    static private string|null $projectPath;
+    static private ?string $projectPath;
 
     /**
      * Path of the current project test dir
      *
      */
-    static private string|null $testDirPath;
+    static private ?string $testDirPath;
 
     /**
      * Get the composer autoloader class from autoload file
