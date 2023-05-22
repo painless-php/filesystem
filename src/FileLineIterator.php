@@ -154,7 +154,7 @@ class FileLineIterator implements SeekableIterator
 
     public function next() : void
     {
-        ++$this->currentLineNumber;
+        $this->currentLineNumber++;
     }
 
     public function rewind() : void

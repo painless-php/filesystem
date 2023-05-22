@@ -80,7 +80,7 @@ class RecursiveFilesystemIterator implements Iterator
             $this->skipNext = false;
         }
         else {
-            ++$this->currentKey;
+            $this->currentKey++;
         }
     }
 
