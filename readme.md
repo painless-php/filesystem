@@ -55,3 +55,6 @@ Note that this package uses the following env variables for testing:
 * cleanup
     * go through methods and make sure there are permission checks when applicable
     * use file's real path for exceptions?
+
+Filesystem::findUpwards() // support providing filepath and then dirname()
+Filesystem::findDownwards() // ^
