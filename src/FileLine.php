@@ -70,7 +70,7 @@ class FileLine
     public function getContent() : string
     {
         if($this->content === null) {
-            $stream = $this->openStream('r');
+            $stream = $this->openStream(FilesystemStreamMode::Read);
             $content = fgets($stream);
 
             if($content === false) {
@@ -110,11 +110,11 @@ class FileLine
      * Open stream at the pointer position
      *
      */
-    public function openStream(string $mode)
+    public function openStream(FilesystemStreamMode $mode)
     {
         $stream = $this->file->openStream($mode);
 
-        if(fseek($stream, $this->position) === false) {
+        if(fseek($stream, $this->position) === -1) {
             $msg = "Could not open stream at offset $this->position";
             throw new FilesystemException($msg, $this->file->getPath());
         }

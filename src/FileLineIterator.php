@@ -120,7 +120,7 @@ class FileLineIterator implements SeekableIterator
     private function getStream()
     {
         if($this->stream === null) {
-            $this->stream = $this->file->openStream('r');
+            $this->stream = $this->file->openStream(FilesystemStreamMode::Read);
         }
 
         return $this->stream;
