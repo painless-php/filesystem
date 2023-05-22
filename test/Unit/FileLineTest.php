@@ -3,13 +3,13 @@
 namespace Test\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Nonetallt\Filesystem\File;
-use Nonetallt\Filesystem\Concern\DeletesTestOutput;
-use Nonetallt\Filesystem\Filesystem;
+use PainlessPHP\Filesystem\File;
+use PainlessPHP\Filesystem\Concern\DeletesTestOutput;
+use PainlessPHP\Filesystem\Filesystem;
 
 class FileLineTest extends TestCase
 {
-    use DeletesTestOutput; 
+    use DeletesTestOutput;
 
     private $file;
 

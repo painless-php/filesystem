@@ -1,9 +1,8 @@
 <?php
 
-namespace Nonetallt\Filesystem;
+namespace PainlessPHP\Filesystem;
 
-use Nonetallt\Filesystem\Exception\FilesystemException;
-use Nonetallt\String\Str;
+use PainlessPHP\Filesystem\Exception\FilesystemException;
 
 /**
  * Class for filesystem helper functions
@@ -15,13 +14,13 @@ class Filesystem
      * Path of the current project
      *
      */
-    static private $projectPath;
+    static private string|null $projectPath;
 
     /**
      * Path of the current project test dir
      *
      */
-    static private $testDirPath;
+    static private string|null $testDirPath;
 
     /**
      * Get the composer autoloader class from autoload file
@@ -107,13 +106,21 @@ class Filesystem
      * Append to the given filesystem path
      *
      */
-    public static function appendToPath(string $path, string $append = null) : string
+    public static function appendToPath(string $path, string $append = '') : string
     {
-        if($append === null) {
-            return Str::removeSuffix($path, '/');
+        if(empty($append)) {
+            return str_ends_with($path, DIRECTORY_SEPARATOR) ? mb_substr($path, 0, mb_strlen($path) - 1) : $path;
         }
 
-        return Str::addSuffix($path, '/') . $append;
+        if(! str_ends_with($path, DIRECTORY_SEPARATOR)) {
+            $path .= DIRECTORY_SEPARATOR;
+        }
+
+        if(! str_starts_with($append, DIRECTORY_SEPARATOR)) {
+            $append = mb_substr($append, 1);
+        }
+
+        return $path . $append;
     }
 
     /**

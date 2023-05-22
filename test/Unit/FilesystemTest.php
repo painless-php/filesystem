@@ -3,7 +3,7 @@
 namespace Test\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Nonetallt\Filesystem\Filesystem;
+use PainlessPHP\Filesystem\Filesystem;
 
 class FilesystemTest extends TestCase
 {

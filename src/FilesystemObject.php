@@ -1,9 +1,9 @@
-<?php 
+<?php
 
-namespace Nonetallt\Filesystem;
+namespace PainlessPHP\Filesystem;
 
-use Nonetallt\String\Str;
-use Nonetallt\Filesystem\Exception\FilesystemException;
+use PainlessPHP\Filesystem\Exception\FilesystemException;
+use SplFileInfo;
 
 /**
  * Meta object describing all filesystem entities. The object itself only
@@ -14,13 +14,11 @@ use Nonetallt\Filesystem\Exception\FilesystemException;
  * - Directories
  *
  */
-abstract class FilesystemObject
+abstract class FilesystemObject extends SplFileInfo
 {
-    protected $pathname;
-
-    public function __construct(string $pathname)
+    public function __construct(string|SplFileInfo $pathname)
     {
-        $this->pathname = $pathname;
+        parent::__construct(is_string($pathname) ? $pathname : $pathname->getPathname());
     }
 
     /**
@@ -28,7 +26,7 @@ abstract class FilesystemObject
      * object the path corresponds to on the filesystem
      *
      */
-    public static function fromPath(string $pathname) : self
+    public static function createFromPath(string $pathname) : self
     {
         if(is_file($pathname)) {
             return new File($pathname);
@@ -43,48 +41,14 @@ abstract class FilesystemObject
     }
 
     /**
-     * Get a string representation of the object (pathname)
-     *
-     */
-    public function __toString() : string
-    {
-        return $this->pathname;
-    }
-
-    /**
      * Check if this object is a directory
+     *
+     * Alias for SplFileInfo::isDir()
      *
      */
     public function isDirectory() : bool
     {
-        return is_dir($this->pathname);
-    }
-
-    /**
-     * Check if this object is a file
-     *
-     */
-    public function isFile() : bool
-    {
-        return is_file($this->pathname);
-    }
-
-    /**
-     * Get permission for the filesystem object
-     *
-     */
-    public function getPermissions() : FilesystemPermissions
-    {
-        return new FilesystemPermissions($this->pathname);
-    }
-
-    /**
-     * Get the path with the name of the object
-     *
-     */
-    public function getPathname() : string
-    {
-        return $this->pathname;
+        return $this->isDir();
     }
 
     /**
@@ -94,13 +58,13 @@ abstract class FilesystemObject
      */
     public function getAbsolutePath() : string
     {
-		$path = str_replace('\\', '/', $this->pathname);
+		$path = str_replace('\\', '/', $this->getPathname());
 
-        if(Str::startsWith($path, '~')) {
+        if(str_starts_with($path, '~')) {
             $pathAfterHome = substr($path, 1);
 
-            if($pathAfterHome !== '') {
-                $pathAfterHome = Str::addPrefix($pathAfterHome, '/');
+            if($pathAfterHome !== '' && ! str_ends_with($pathAfterHome, DIRECTORY_SEPARATOR)) {
+                $pathAfterHome .= DIRECTORY_SEPARATOR;
             }
 
             $path = Filesystem::homeDirectoryPath() . $pathAfterHome;
@@ -134,15 +98,6 @@ abstract class FilesystemObject
     }
 
     /**
-     * Get name of the object
-     *
-     */
-    public function getName() : string
-    {
-        return basename($this->pathname);
-    }
-
-    /**
      * Get the path of this object in relation to another path. An exception
      * will be thrown If the given path is not a parent path of this object
      *
@@ -152,14 +107,14 @@ abstract class FilesystemObject
     public function getRelativePath(string $parentPath) : string
     {
         $path = $this->getAbsolutePath();
-        $parentPath = Str::addSuffix($parentPath, '/');
+        $parentPath = str_ends_with($parentPath, DIRECTORY_SEPARATOR) ? $parentPath : $parentPath . DIRECTORY_SEPARATOR;
 
-        if(! Str::startsWith($path, $parentPath)) {
-            $msg = "Path {$path} is not relative to parent path '$parentPath'";
+        if(! str_starts_with($path, $parentPath)) {
+            $msg = "Path '$path' is not relative to parent path '$parentPath'";
             throw new FilesystemException($msg);
         }
 
-        return substr($path, strlen($parentPath));
+        return mb_substr($path, mb_strlen($parentPath));
     }
 
     /**
@@ -171,7 +126,18 @@ abstract class FilesystemObject
      */
     public function getParentDirectory() : ?Directory
     {
-        return new Directory(dirname($this->pathname));
+        return new Directory(dirname($this->getPathname()));
+    }
+
+    /**
+     * Get the path of the object
+     *
+     * Alias for getPathname()
+     *
+     */
+    public function getPath() : string
+    {
+        return $this->getPathname();
     }
 
     /**
@@ -197,7 +163,7 @@ abstract class FilesystemObject
      * thrown
      *
      */
-    abstract public function create(bool $recursive = false);
+    abstract public function create(bool $recursive = false, bool $overwrite = false);
 
     /**
      * Copy the filesystem object
@@ -213,14 +179,6 @@ abstract class FilesystemObject
      *
      */
     abstract public function move(string $destination);
-
-    /**
-     * Get the path of the object
-     *
-     * See also getPathname()
-     *
-     */
-    abstract public function getPath() : string;
 
     /**
      * Delete filesystem object

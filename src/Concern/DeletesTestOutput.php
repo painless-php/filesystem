@@ -1,9 +1,8 @@
 <?php
 
-namespace Nonetallt\Filesystem\Concern;
+namespace PainlessPHP\Filesystem\Concern;
 
-use Nonetallt\String\Str;
-use Nonetallt\Filesystem\Filesystem;
+use PainlessPHP\Filesystem\Filesystem;
 
 /**
  * Trait that can be attached to test classes that test filesystem
@@ -29,7 +28,7 @@ trait DeletesTestOutput
     private function deleteDirectory(string $dirPath, bool $deleteDir)
     {
         $exclude = [
-            '.', 
+            '.',
             '..',
             '.gitignore',
             '.keep'

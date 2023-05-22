@@ -1,11 +1,12 @@
 <?php
 
-namespace Nonetallt\Filesystem;
+namespace PainlessPHP\Filesystem;
 
-use Nonetallt\Filesystem\FilesystemObject;
-use Nonetallt\Filesystem\Exception\PermissionException;
-use Nonetallt\Filesystem\Exception\FileNotFoundException;
-use Nonetallt\Filesystem\Exception\FilesystemException;
+use PainlessPHP\Filesystem\FilesystemObject;
+use PainlessPHP\Filesystem\Exception\FilesystemPermissionException;
+use PainlessPHP\Filesystem\Exception\FileNotFoundException;
+use PainlessPHP\Filesystem\Exception\FilesystemException;
+use FilesystemIterator;
 
 class Directory extends FilesystemObject
 {
@@ -16,16 +17,16 @@ class Directory extends FilesystemObject
     public function create(bool $recursive = false)
     {
         // Do not attempt creation if file already exists
-        if(is_dir($this->pathname)) {
+        if(is_dir($this->getPathname())) {
             return;
         }
-        else if(is_file($this->pathname)) {
+        else if(is_file($this->getPathname())) {
             $msg = "A file with this name already exists";
-            throw new FilesystemException($msg, $this->pathname);
+            throw new FilesystemException($msg, $this->getPathname());
         }
 
         // Check if parent directory exists, if not, create it recursively
-        $parentDir = dirname($this->pathname);
+        $parentDir = dirname($this->getPathname());
 
         if(! is_dir($parentDir)) {
 
@@ -44,10 +45,10 @@ class Directory extends FilesystemObject
 
         if(! is_writable($parentDir)) {
             $msg = "Can't create directory, no write permission";
-            throw new PermissionException($msg, $parentDir);
+            throw new FilesystemPermissionException($msg, $parentDir);
         }
 
-        mkdir($this->pathname);
+        mkdir($this->getPathname());
     }
 
     /**
@@ -61,9 +62,9 @@ class Directory extends FilesystemObject
      */
     public function getSize() : int
     {
-        $size = filesize($this->pathname);
+        $size = filesize($this->getPathname());
 
-        foreach($this->getChildren() as $child)  {
+        foreach($this->getContents() as $child)  {
             $size += $child->getSize();
         }
 
@@ -78,8 +79,8 @@ class Directory extends FilesystemObject
     {
         (new Directory($destination))->create($recursive);
 
-        foreach($this->getChildren() as $object) {
-            $object->copy("$destination/" . basename($object->getPathname()));
+        foreach($this->getContents() as $object) {
+            $object->copy("$destination/" . basename($object->getPathname()()));
             $object->delete();
         }
     }
@@ -95,21 +96,10 @@ class Directory extends FilesystemObject
     }
 
     /**
-     * Get the path of the object
-     *
-     * For directories, this is the same as getPathname()
-     *
-     */
-    public function getPath() : string
-    {
-        return $this->pathname;
-    }
-
-    /**
      * Delete filesystem object
      *
      ** @param bool $recursive Whether subdirectories and their contents should be
-     * deleted recursively 
+     * deleted recursively
      *
      * @param array|string $exclude List of file / directory names to save from
      * deletion
@@ -125,11 +115,11 @@ class Directory extends FilesystemObject
     {
         if(! $this->isEmpty() && ! $recursive) {
             $msg = "Directory is not empty, please use the recursive parameter if you wish to delete the directory along with it's contents";
-            throw new FilesystemException($msg, $this->pathname);
+            throw new FilesystemException($msg, $this->getPathname());
         }
 
         if($this->deleteContents(true, $exclude)) {
-            rmdir($this->pathname);
+            rmdir($this->getPathname());
             return true;
         }
 
@@ -140,7 +130,7 @@ class Directory extends FilesystemObject
      * Delete contents of the object.
      *
      * @param bool $recursive Whether contents of subdirectories should be
-     * deleted recursively 
+     * deleted recursively
      *
      * @param array|string $exclude List of file / directory names to save from
      * deletion
@@ -160,7 +150,7 @@ class Directory extends FilesystemObject
 
         $isEmpty = true;
 
-        foreach($this->getChildren() as $object) {
+        foreach($this->getContents() as $object) {
 
             // Skip deletion of non recursive dirs
             if($object->isDirectory() && ! $recursive) {
@@ -192,22 +182,22 @@ class Directory extends FilesystemObject
     public function isEmpty() : bool
     {
         if(! $this->exists()) {
-            throw new FileNotFoundException($this->pathname);
+            throw new FileNotFoundException($this->getPathname());
         }
 
-        return ! (new \FilesystemIterator($this->pathname))->valid();
+        return ! (new FilesystemIterator($this->getPathname()))->valid();
     }
 
     /**
      * Get children filesystem objects
      *
      */
-    public function getChildren() : array
+    public function getContents() : array
     {
         $children = [];
 
-        foreach(array_diff(scandir($this->pathname), ['.', '..']) as $relativePath) {
-            $realPath = "$this->pathname/$relativePath";
+        foreach(array_diff(scandir($this->getPathname()), ['.', '..']) as $relativePath) {
+            $realPath = "{$this->getPathname()}/$relativePath";
             $child = is_file($realPath) ? new File($realPath) : new Directory($realPath);
             $children[] = $child;
         }
@@ -221,7 +211,7 @@ class Directory extends FilesystemObject
      */
     public function exists() : bool
     {
-        return is_dir($this->pathname);
+        return is_dir($this->getPathname());
     }
 
     /**
@@ -230,7 +220,6 @@ class Directory extends FilesystemObject
      */
     public function rename(string $newName)
     {
-        $this->move(dirname($this->pathname) . "/$newName", true);
+        $this->move(dirname($this->getPathname()) . "/$newName", true);
     }
 }
-

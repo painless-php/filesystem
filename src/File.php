@@ -1,20 +1,19 @@
 <?php
 
-namespace Nonetallt\Filesystem;
+namespace PainlessPHP\Filesystem;
 
-use Nonetallt\Filesystem\Exception\FilesystemException;
-use Nonetallt\Filesystem\Exception\FileNotFoundException;
-use Nonetallt\Filesystem\Exception\PermissionException;
-use Nonetallt\Filesystem\FilesystemPermissions;
-use Nonetallt\String\Str;
+use PainlessPHP\Filesystem\Exception\FilesystemException;
+use PainlessPHP\Filesystem\Exception\FileNotFoundException;
+use PainlessPHP\Filesystem\Exception\FilesystemPermissionException;
+use IteratorAggregate;
 
-class File extends FilesystemObject implements \IteratorAggregate
+class File extends FilesystemObject implements IteratorAggregate
 {
     /**
      * Create a new temporary file
      *
      */
-    public static function temp() : self
+    public static function createTemporary() : self
     {
         $tmp = tmpfile();
         $meta = stream_get_meta_data($tmp);
@@ -29,11 +28,10 @@ class File extends FilesystemObject implements \IteratorAggregate
     public function create(bool $recursive = false)
     {
         if($recursive) {
-            $dir = new Directory(dirname($this->pathname));
-            $dir->create(true);
+            $this->getParentDirectory()->create(true);
         }
 
-        file_put_contents($this->pathname, '');
+        file_put_contents($this->getPathname(), '');
     }
 
     /**
@@ -42,7 +40,7 @@ class File extends FilesystemObject implements \IteratorAggregate
      */
     public function delete()
     {
-        unlink($this->pathname);
+        unlink($this->getPathname());
     }
 
     /**
@@ -51,7 +49,7 @@ class File extends FilesystemObject implements \IteratorAggregate
      */
     public function deleteContents()
     {
-        file_put_contents($this->pathname, '');
+        file_put_contents($this->getPathname(), '');
     }
 
     /**
@@ -68,32 +66,31 @@ class File extends FilesystemObject implements \IteratorAggregate
         }
 
         /* Remove leading dots for comparison */
-        while(Str::startsWith($extension, '.')) {
+        while(str_starts_with($extension, '.')) {
             $extension = substr($extension, 1);
-        } 
+        }
         /* Check if the file extension equals the one given by user */
         return $this->getExtension() === $extension;
     }
-    
+
     /**
-     * @throws Nonetallt\Helpers\Filesystem\Exceptions\FilesystemException
+     * @throws FilesystemException
      *
-     * @param string $mode fopen() mode
+     * @param FilesystemStreamMode $mode fopen() mode
      * @return resource $stream
      *
      */
-    public function openStream(string $mode)
+    public function openStream(FilesystemStreamMode $mode)
     {
         if(! $this->exists()) {
-            throw new FileNotFoundException($this->pathname);
+            throw FileNotFoundException::createFromPath($this->getPathname());
         }
 
-        $this->getPermissions()->validateStreamMode($mode);
-        $stream = fopen($this->pathname, $mode);
+        $stream = fopen($this->getPathname(), $mode->value);
 
         if($stream === false) {
-            $msg = 'Could not open stream';
-            throw new FilesystemException($msg, $this->pathname);
+            $msg = "Could not open stream (filepath '{$this->getPathname()}')";
+            throw new FilesystemException($msg);
         }
 
         return $stream;
@@ -106,10 +103,10 @@ class File extends FilesystemObject implements \IteratorAggregate
     public function getSize() : int
     {
         if(! $this->exists()) {
-            throw new FileNotFoundException($this->pathname);
+            throw FileNotFoundException::createFromPath($this->getPathname());
         }
 
-        return filesize($this->pathname);
+        return filesize($this->getPathname());
     }
 
     public function getLines() : FileLineIterator
@@ -117,46 +114,15 @@ class File extends FilesystemObject implements \IteratorAggregate
         return new FileLineIterator($this);
     }
 
-    public function getPermissions() : FilesystemPermissions
-    {
-        return new FilesystemPermissions($this->pathname);
-    }
-
-    public function getExtension() : ?string
-    {
-        $name = Str::removeLeading($this->getName(), '.');
-
-        $parts = explode('.', $name, 2);
-        $partsCount = count($parts);
-
-        /* File does not have an extension */
-        if($partsCount < 2) {
-            return null;
-        } 
-
-        return $parts[$partsCount - 1];
-    }
-
     public function getPath() : string
     {
-        return dirname($this->pathname);
+        return dirname($this->getPathname());
     }
 
-    /**
-     * Get the filename without extension 
-     *
-     * use getName() to get filename with extension
-     *
-     */
-    public function getBaseName() : string
+    public function getContents() : string
     {
-        return basename($this->pathname, '.' . $this->getExtension());
+        return file_get_contents($this->getPathname());
     }
-
-    public function getContent() : string
-    {
-        return file_get_contents($this->pathname);
-    }   
 
     public function getIterator() : \Traversable
     {
@@ -164,36 +130,22 @@ class File extends FilesystemObject implements \IteratorAggregate
     }
 
     /**
-     * string|FileLineIterator|File $content
-     *
+     * @param string|File|FileLineIterator $content
      *
      */
-    public function write($content)
+    public function write(string|File|FileLineIterator $content)
     {
         if(is_string($content)) {
-            file_put_contents($this->pathname, $content);
+            file_put_contents($this->getPathname(), $content);
             return;
         }
 
-        $fileClass = File::class;
-        if(is_a($content, $fileClass)) {
-            $this->writeLines($content->getLines());
-            return;
-        }
-
-        $iteratorClass = FileLineIterator::class;
-        if(is_a($content, $iteratorClass)) {
-            $this->writeLines($content);
-            return;
-        }
-
-        $msg = "Write content must be either a string, $fileClass or $iteratorClass";
-        throw new \InvalidArgumentException($msg);
+        $this->writeLines($content instanceof File ? $content->getLines() : $content);
     }
 
     public function writeLines(FileLineIterator $lines)
     {
-        $stream = $this->openStream('w');
+        $stream = $this->openStream(FilesystemStreamMode::Write);
 
         foreach($lines as $line) {
             fwrite($stream, $line->getContent());
@@ -202,32 +154,30 @@ class File extends FilesystemObject implements \IteratorAggregate
         fclose($stream);
     }
 
-    public function copy(string $destination)
+    public function copy(string $destinationPath)
     {
-        $permissions = new FilesystemPermissions($destination);
-
         if(! $this->exists()) {
-            throw new FileNotFoundException($this->pathname);
+            throw new FileNotFoundException($this->getPathname());
         }
 
-        if(! $this->getPermissions()->isReadable()) {
+        if(! $this->isReadable()) {
             $path = $this->getRealPath();
             $msg = "Copy source '$path' is not readable";
-            throw new PermissionException($msg, $destination);
+            throw new FilesystemPermissionException($msg);
         }
 
-        if(! $permissions->isWritable()) {
-            $msg = "Copy destination '$destination' is not writable";
-            throw new PermissionException($msg, $destination);
+        if(is_writable($destinationPath)) {
+            $msg = "Copy destination '$destinationPath' is not writable";
+            throw new FilesystemPermissionException($msg);
         }
 
-        copy($this->pathname, $destination);
+        copy($this->getPathname(), $destinationPath);
     }
 
     public function move(string $destination)
     {
         $this->copy($destination);
-        unlink($this->pathname);
+        unlink($this->getPathname());
     }
 
     public function rename(string $name)
@@ -242,6 +192,6 @@ class File extends FilesystemObject implements \IteratorAggregate
 
     public function exists() : bool
     {
-        return is_file($this->pathname);
+        return is_file($this->getPathname());
     }
 }

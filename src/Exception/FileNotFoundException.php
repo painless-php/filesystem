@@ -1,11 +1,13 @@
 <?php
 
-namespace Nonetallt\Filesystem\Exception;
+namespace PainlessPHP\Filesystem\Exception;
+
+use Exception;
 
 class FileNotFoundException extends FilesystemException
 {
-    public function __construct(string $path, string $message = "File not found", int $code = 0, \Exception $previous = null)
+    public static function createFromPath(string $filepath, int $code = 0, Exception $previous = null) : self
     {
-        parent::__construct($message, $path, $code, $previous);
+        return new self("File not found (filepath: '$filepath')", $code, $previous);
     }
 }

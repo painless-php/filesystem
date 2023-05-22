@@ -3,12 +3,12 @@
 namespace Test\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Nonetallt\Filesystem\File;
-use Nonetallt\Filesystem\Exception\FileNotFoundException;
-use Nonetallt\Filesystem\Exception\TargetNotFileException;
-use Nonetallt\Filesystem\Exception\PermissionException;
-use Nonetallt\Filesystem\Concern\DeletesTestOutput;
-use Nonetallt\Filesystem\Filesystem;
+use PainlessPHP\Filesystem\File;
+use PainlessPHP\Filesystem\Exception\FileNotFoundException;
+use PainlessPHP\Filesystem\Exception\TargetNotFileException;
+use PainlessPHP\Filesystem\Exception\PermissionException;
+use PainlessPHP\Filesystem\Concern\DeletesTestOutput;
+use PainlessPHP\Filesystem\Filesystem;
 
 class FileModificationTest extends TestCase
 {

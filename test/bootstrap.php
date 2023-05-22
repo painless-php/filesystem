@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 /* Load .env configuration for testing */
 $envDir = dirname(__DIR__);
 
-if(file_exists($envDir . '/.env')) {
+if(is_file($envDir . '/.env')) {
     $dotenv = Dotenv\Dotenv::createImmutable($envDir);
     $dotenv->load();
 }

@@ -1,10 +1,11 @@
 <?php
 
-namespace Nonetallt\Filesystem;
+namespace PainlessPHP\Filesystem;
 
-use Nonetallt\String\Str;
+use OutOfBoundsException;
+use SeekableIterator;
 
-class FileLineIterator implements \SeekableIterator
+class FileLineIterator implements SeekableIterator
 {
     private $file;
     private $stream;
@@ -20,7 +21,7 @@ class FileLineIterator implements \SeekableIterator
     {
         /* Close stream if open */
         if(is_resource($this->stream)) {
-            fclose($this->stream); 
+            fclose($this->stream);
         }
     }
 
@@ -46,7 +47,7 @@ class FileLineIterator implements \SeekableIterator
             if(! $readBlank && trim($line) === '') continue;
 
             /* Strip line ending if option is in use */
-            if($stripLineEndings && Str::endsWith($line, PHP_EOL)) {
+            if($stripLineEndings && str_ends_with($line, PHP_EOL)) {
                 $line = substr($line, 0, strlen($line) - strlen(PHP_EOL));
             }
 
@@ -58,7 +59,7 @@ class FileLineIterator implements \SeekableIterator
     }
 
     /**
-     * Get lines. 
+     * Get lines.
      *
      * @param int $offset How many lines should be skipped from the beginning
      * of the file.
@@ -114,12 +115,13 @@ class FileLineIterator implements \SeekableIterator
         return $this->stream;
     }
 
-    public function seek(int $position) 
+    public function seek(int $position) : void
     {
         $size = $this->file->getSize();
+
         if($position > $size) {
             $msg = "Seek position $position is greater than file size $size";
-            throw new \OutOfBoundsException($msg);
+            throw new OutOfBoundsException($msg);
         }
 
         // TODO
@@ -138,12 +140,12 @@ class FileLineIterator implements \SeekableIterator
         return $this->currentLineNumber;
     }
 
-    public function next()
+    public function next() : void
     {
         ++$this->currentLineNumber;
     }
 
-    public function rewind()
+    public function rewind() : void
     {
         $this->currentLineNumber = 0;
         $this->stream = null;

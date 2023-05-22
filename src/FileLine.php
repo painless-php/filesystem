@@ -1,8 +1,8 @@
 <?php
 
-namespace Nonetallt\Filesystem;
+namespace PainlessPHP\Filesystem;
 
-use Nonetallt\Filesystem\Exception\FilesystemException;
+use PainlessPHP\Filesystem\Exception\FilesystemException;
 
 class FileLine
 {
@@ -89,7 +89,7 @@ class FileLine
      * Override the file content for this line
      *
      */
-    public function writeContent(string $content) : string
+    public function writeContent(string $content)
     {
         $tmp = tmpfile();
         $meta = stream_get_meta_data($tmp);

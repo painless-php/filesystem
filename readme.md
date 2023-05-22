@@ -1,28 +1,32 @@
 # file
 
-PHP file manipulation using OOP.
+Filesystem helper functionality for PHP.
+
+## Installation
+
+```
+composer require painless-php/filesystem
+```
 
 ## Public API
 
 #### Core
 
-* Nonetallt\Filesystem\Filesystem
-* Nonetallt\Filesystem\FilesystemObject
-    * Nonetallt\Filesystem\File
-    * Nonetallt\Filesystem\Directory
-* Nonetallt\Filesystem\FilesystemPermissions
+* PainlessPHP\Filesystem\Filesystem
+* PainlessPHP\Filesystem\FilesystemObject
+    * PainlessPHP\Filesystem\File
+    * PainlessPHP\Filesystem\Directory
+* PainlessPHP\Filesystem\FilesystemPermissions
 
 #### Testing
 
-* Nonetallt\Filesystem\Concern\DeletesTestOutput
+* PainlessPHP\Filesystem\Concern\DeletesTestOutput
 
 #### Exception
 
-* Nonetallt\Filesystem\Exception\FilesystemException
-    * Nonetallt\Filesystem\Exception\FileNotFoundException
-    * Nonetallt\Filesystem\Exception\PermissionException
-    * Nonetallt\Filesystem\Exception\TargetNotDirectoryException
-    * Nonetallt\Filesystem\Exception\TargetNotFileException
+* PainlessPHP\Filesystem\Exception\FilesystemException
+    * PainlessPHP\Filesystem\Exception\FileNotFoundException
+    * PainlessPHP\Filesystem\Exception\FilesystemPermissionException
 
 ## Development
 
@@ -35,8 +39,8 @@ Note that this package uses the following env variables for testing:
     * getAbsolutePath() conversions
     * directory delete relative and absolute exclusion patterns
 
-* refactor 
-    * FileLineIterator 
+* refactor
+    * FileLineIterator
         * seekable iterator or generator?
     * FileLine
         * write method kind of sucks?
