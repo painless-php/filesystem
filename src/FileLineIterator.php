@@ -126,19 +126,19 @@ class FileLineIterator implements SeekableIterator
         return $this->stream;
     }
 
-    public function seek(int $position) : void
+    public function seek(int $offset) : void
     {
         $size = $this->file->getSize();
 
-        if($position > $size) {
-            $msg = "Seek position {$position} is greater than file size {$size}";
+        if($offset > $size) {
+            $msg = "Seek position {$offset} is greater than file size {$size}";
             throw new OutOfBoundsException($msg);
         }
 
         // TODO
     }
 
-    public function current()
+    public function current(): mixed
     {
         $line = new FileLine($this->file, $this->currentLineNumber + 1, ftell($this->getStream()));
         $line->setContent(fgets($this->getStream()));
@@ -146,7 +146,7 @@ class FileLineIterator implements SeekableIterator
         return $line;
     }
 
-    public function key()
+    public function key(): mixed
     {
         return $this->currentLineNumber;
     }

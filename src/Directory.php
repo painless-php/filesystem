@@ -13,7 +13,7 @@ class Directory extends FilesystemObject
      * Create directory on the filesystem
      *
      */
-    public function create(bool $recursive = false)
+    public function create(bool $recursive = false, bool $overwrite = false)
     {
         // Do not attempt creation if file already exists
         if(is_dir($this->getPathname())) {

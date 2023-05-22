@@ -26,13 +26,13 @@ class File extends FilesystemObject implements IteratorAggregate
      * Create the file on the filesystem
      *
      */
-    public function create(bool $recursive = false)
+    public function create(bool $recursive = false, bool $overwrite = false)
     {
         if($recursive) {
             $this->getParentDirectory()->create(true);
         }
 
-        file_put_contents($this->getPathname(), '');
+        file_put_contents($this->getPathname(), '', $overwrite ? 0 : FILE_APPEND);
     }
 
     /**
@@ -63,7 +63,7 @@ class File extends FilesystemObject implements IteratorAggregate
 
         /* File has extension if it is not empty */
         if($extension === null) {
-            return $realExtension !== null;
+            return $realExtension !== '';
         }
 
         /* Remove leading dots for comparison */
@@ -155,7 +155,7 @@ class File extends FilesystemObject implements IteratorAggregate
         fclose($stream);
     }
 
-    public function copy(string $destinationPath)
+    public function copy(string $destination)
     {
         if(! $this->exists()) {
             throw new FileNotFoundException($this->getPathname());
@@ -167,12 +167,12 @@ class File extends FilesystemObject implements IteratorAggregate
             throw new FilesystemPermissionException($msg);
         }
 
-        if(is_writable($destinationPath)) {
-            $msg = "Copy destination '{$destinationPath}' is not writable";
+        if(is_writable($destination)) {
+            $msg = "Copy destination '{$destination}' is not writable";
             throw new FilesystemPermissionException($msg);
         }
 
-        copy($this->getPathname(), $destinationPath);
+        copy($this->getPathname(), $destination);
     }
 
     public function move(string $destination)
@@ -181,9 +181,9 @@ class File extends FilesystemObject implements IteratorAggregate
         unlink($this->getPathname());
     }
 
-    public function rename(string $name)
+    public function rename(string $newName)
     {
-        $this->move($this->getPath() . "/{$name}");
+        $this->move($this->getPath() . "/{$newName}");
     }
 
     public function isEmpty() : bool
