@@ -44,7 +44,9 @@ class FileLineIterator implements SeekableIterator
 
         foreach($this as $line) {
             /* Skip empty lines when readBlank argument is not used */
-            if(! $readBlank && trim($line) === '') continue;
+            if(! $readBlank && trim($line) === '') {
+                continue;
+            }
 
             /* Strip line ending if option is in use */
             if($stripLineEndings && str_ends_with($line, PHP_EOL)) {
@@ -52,7 +54,9 @@ class FileLineIterator implements SeekableIterator
             }
 
             /* Return line content and index to callback */
-            if($cb($line, $lineNumber) === false) break;
+            if($cb($line, $lineNumber) === false) {
+                break;
+            }
 
             $lineNumber++;
         }
@@ -81,10 +85,14 @@ class FileLineIterator implements SeekableIterator
         $this->read(function($line, $lineNumber) use ($offset, $limit, &$lines) {
 
             /* Only capture lines after offset */
-            if($lineNumber > $offset) $lines[] = $line;
+            if($lineNumber > $offset) {
+                $lines[] = $line;
+            }
 
             /* Stop reading after limit */
-            if($limit !== null && count($lines) >= $limit) return false;
+            if($limit !== null && count($lines) >= $limit) {
+                return false;
+            }
         }, $readBlank, $stripLineEndings);
 
         return $lines;
@@ -96,12 +104,16 @@ class FileLineIterator implements SeekableIterator
 
         foreach($this as $line) {
             /* Skip empty lines when countEmpty argument is not used */
-            if(! $countEmpty && trim($line) === '') continue;
+            if(! $countEmpty && trim($line) === '') {
+                continue;
+            }
             $lineCount++;
         }
 
         /* Remove one from line count to account for feof operation */
-        if($countEmpty) $lineCount--;
+        if($countEmpty) {
+            $lineCount--;
+        }
 
         return $lineCount;
     }

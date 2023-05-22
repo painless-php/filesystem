@@ -124,7 +124,9 @@ class RecursiveFilesystemIterator implements Iterator
 
         while(! $this->currentIterator->valid()) {
             $next = $this->getNextIterator();
-            if($next === null) break;
+            if($next === null) {
+                break;
+            }
             $this->currentIterator = $next;
         }
 
