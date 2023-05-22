@@ -70,7 +70,7 @@ abstract class FilesystemObject extends SplFileInfo
             $path = Filesystem::homeDirectoryPath() . $pathAfterHome;
         }
 
-        if (strpos($path, '..') === false) {
+        if (!str_contains($path, '..')) {
             return $path;
         }
 
