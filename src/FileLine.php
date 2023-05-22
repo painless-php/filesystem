@@ -16,7 +16,6 @@ class FileLine
         $this->file = $file;
         $this->number = $number;
         $this->position = $position;
-        $this->content = null;
     }
 
     /**
