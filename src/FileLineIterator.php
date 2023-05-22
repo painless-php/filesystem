@@ -34,7 +34,7 @@ class FileLineIterator implements SeekableIterator
      * @param bool $readBlank If set to true, lines with only whitespace will
      * also be red.
      *
-     * @param bool $stripLineEdings set to true if you want to remove line
+     * @param bool $stripLineEndings set to true if you want to remove line
      * endings for the returned lines.
      *
      */
@@ -68,16 +68,15 @@ class FileLineIterator implements SeekableIterator
      * @param int $offset How many lines should be skipped from the beginning
      * of the file.
      *
-     * @param int $limit How many lines should be returned.
+     * @param int|null $limit How many lines should be returned.
      *
      * @param bool $readBlank Set to false if you want to skip lines with only
      * whitespace.
      *
-     * @param bool $stripLineEdings set to true if you want to remove line
+     * @param bool $stripLineEndings set to true if you want to remove line
      * endings for the returned lines.
      *
-     * @return array $lines
-     *
+     * @return array
      */
     public function get(int $offset = 0, ?int $limit = null, bool $readBlank = false, bool $stripLineEndings = true) : array
     {

@@ -97,18 +97,20 @@ class Directory extends FilesystemObject
     /**
      * Delete filesystem object
      *
-     ** @param bool $recursive Whether subdirectories and their contents should be
+     *
+     * @param bool $recursive Whether subdirectories and their contents should be
      * deleted recursively
      *
-     * @param array|string $exclude List of file / directory names to save from
+     * @param array $exclude List of file / directory names to save from
      * deletion
      *
-     ** @param string|null $root path to the topmost level, should not be used
+     * @param string|null $root path to the topmost level, should not be used
      * outside class
      *
      * @return bool $deleted Whether the directory was actually deleted
      * (some files may be spared if $exclude parameter is used)
-     *
+     * @throws FileNotFoundException
+     * @throws FilesystemException
      */
     public function delete(bool $recursive = false, array $exclude = [], ?string $root = null) : bool
     {
@@ -131,7 +133,7 @@ class Directory extends FilesystemObject
      * @param bool $recursive Whether contents of subdirectories should be
      * deleted recursively
      *
-     * @param array|string $exclude List of file / directory names to save from
+     * @param array $exclude List of file / directory names to save from
      * deletion
      *
      * @param string|null $root path to the topmost level, should not be used
@@ -139,7 +141,7 @@ class Directory extends FilesystemObject
      *
      * @return bool $isEmpty Whether directory is empty after deletion (some
      * files may be spared if $exclude parameter is used)
-     e
+     * e
      */
     public function deleteContents(bool $recursive = false, array $exclude = [], ?string $root = null) : bool
     {

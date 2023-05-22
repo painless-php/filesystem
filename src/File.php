@@ -99,7 +99,7 @@ class File extends FilesystemObject implements IteratorAggregate
 
     /**
      * @return int $size filesize in bytes
-     *
+     * @throws FileNotFoundException
      */
     public function getSize() : int
     {
