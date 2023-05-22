@@ -109,7 +109,7 @@ class Filesystem
     public static function appendToPath(string $path, string $append = '') : string
     {
         if(empty($append)) {
-            return str_ends_with($path, DIRECTORY_SEPARATOR) ? mb_substr($path, 0, mb_strlen($path) - 1) : $path;
+            return str_ends_with($path, DIRECTORY_SEPARATOR) ? mb_substr($path, 0, -1) : $path;
         }
 
         if(! str_ends_with($path, DIRECTORY_SEPARATOR)) {
