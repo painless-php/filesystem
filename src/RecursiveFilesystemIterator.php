@@ -4,10 +4,11 @@ namespace PainlessPHP\Filesystem;
 
 use FilesystemIterator;
 use InvalidArgumentException;
+use Iterator;
 use RecursiveDirectoryIterator;
 use SplFileInfo;
 
-class RecursiveFilesystemIterator implements \Iterator
+class RecursiveFilesystemIterator implements Iterator
 {
     private string $path;
     private int $currentKey;

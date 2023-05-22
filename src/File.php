@@ -6,6 +6,7 @@ use PainlessPHP\Filesystem\Exception\FilesystemException;
 use PainlessPHP\Filesystem\Exception\FileNotFoundException;
 use PainlessPHP\Filesystem\Exception\FilesystemPermissionException;
 use IteratorAggregate;
+use Traversable;
 
 class File extends FilesystemObject implements IteratorAggregate
 {
@@ -124,7 +125,7 @@ class File extends FilesystemObject implements IteratorAggregate
         return file_get_contents($this->getPathname());
     }
 
-    public function getIterator() : \Traversable
+    public function getIterator() : Traversable
     {
         return new FileLineIterator($this);
     }
