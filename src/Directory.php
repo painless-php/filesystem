@@ -81,6 +81,8 @@ class Directory extends FilesystemObject implements IteratorAggregate
     {
         (new self($destination))->create($recursive);
 
+        // TODO use iterator
+
         foreach($this->getContents() as $object) {
             $object->copy("{$destination}/" . basename($object->getPathname()()));
             $object->delete();
@@ -148,6 +150,7 @@ class Directory extends FilesystemObject implements IteratorAggregate
      */
     public function deleteContents(bool $recursive = false, array $exclude = [], ?string $root = null) : bool
     {
+        // TODO use iterator
         if($root === null) {
             $root = $this->getAbsolutePath();
         }

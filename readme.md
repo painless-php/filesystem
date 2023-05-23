@@ -29,6 +29,9 @@ Filesystem::findUpwards() // support providing filepath and then dirname()
 Filesystem::findDownwards() // ^
 FilesystemObject::getRelativePath() should work with both children and parent paths
 
+Use iterator for Directory recursive deleteContents
+Use iterator for Directory recursive copy
+
 ComposerJson class
 Env editable class
 
