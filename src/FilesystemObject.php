@@ -79,29 +79,8 @@ abstract class FilesystemObject extends SplFileInfo
      */
     public function getParentDirectory() : ?Directory
     {
+        // TODO should return null if at top level
         return new Directory(dirname($this->getPathname()));
-    }
-
-    /**
-     * Get the path of the object
-     *
-     * Alias for getPathname()
-     *
-     */
-    public function getPath() : string
-    {
-        return $this->getPathname();
-    }
-
-    /**
-     * Check if this object is a directory
-     *
-     * Alias for SplFileInfo::isDir()
-     *
-     */
-    public function isDirectory() : bool
-    {
-        return $this->isDir();
     }
 
     /**
