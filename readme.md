@@ -29,6 +29,10 @@ Filesystem::findUpwards() // support providing filepath and then dirname()
 Filesystem::findDownwards() // ^
 FilesystemObject::getRelativePath() should work with both children and parent paths
 
+RecursiveFilesystemIterator
+* support exclusion of files (support patterns?)
+* fix skipDirectory (support levels?)
+
 Use iterator for Directory recursive deleteContents
 Use iterator for Directory recursive copy
 
@@ -39,5 +43,4 @@ Env editable class
 * Make sure that permission errors throw correct exceptions
 * use file's real path for exceptions?
 
-* Directory
-    * allow deletion exclusion by relative path and absolute path
+* Directory::delete allow exclusion by relative path and absolute path
