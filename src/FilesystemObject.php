@@ -41,60 +41,13 @@ abstract class FilesystemObject extends SplFileInfo
     }
 
     /**
-     * Check if this object is a directory
-     *
-     * Alias for SplFileInfo::isDir()
-     *
-     */
-    public function isDirectory() : bool
-    {
-        return $this->isDir();
-    }
-
-    /**
      * Get the real path of the object. This method doesn't use the native
      * realpath() function because realpath() won't work with files that don't exist.
      *
      */
     public function getAbsolutePath() : string
     {
-		$path = str_replace('\\', '/', $this->getPathname());
-
-        if(str_starts_with($path, '~')) {
-            $pathAfterHome = substr($path, 1);
-
-            if($pathAfterHome !== '' && ! str_ends_with($pathAfterHome, DIRECTORY_SEPARATOR)) {
-                $pathAfterHome .= DIRECTORY_SEPARATOR;
-            }
-
-            $path = Filesystem::homeDirectoryPath() . $pathAfterHome;
-        }
-
-        if (!str_contains($path, '..')) {
-            return $path;
-        }
-
-        $first = '';
-        $parts = explode('/', $path);
-        if ($filter) {
-            $first = $path[0] === '/' ? '/' : '';
-            $parts = array_filter($parts, 'strlen');
-        }
-
-        $absolutes = [];
-        foreach ($parts as $part) {
-            if ($part === '.') {
-                continue;
-            }
-
-            if ($part === '..') {
-                array_pop($absolutes);
-            } else {
-                $absolutes[] = $part;
-            }
-        }
-
-        return $first . implode('/', $absolutes);
+        // TODO
     }
 
     /**
@@ -141,6 +94,17 @@ abstract class FilesystemObject extends SplFileInfo
     }
 
     /**
+     * Check if this object is a directory
+     *
+     * Alias for SplFileInfo::isDir()
+     *
+     */
+    public function isDirectory() : bool
+    {
+        return $this->isDir();
+    }
+
+    /**
      * Check if this object actually exists in the filesystem
      *
      */
@@ -158,7 +122,7 @@ abstract class FilesystemObject extends SplFileInfo
     abstract public function create(bool $recursive = false, bool $overwrite = false);
 
     /**
-     * Copy the filesystem object
+     * Copy the filesystem object to the target location
      *
      */
     abstract public function copy(string $destination);
