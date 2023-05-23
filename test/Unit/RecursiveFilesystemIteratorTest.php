@@ -4,6 +4,7 @@ namespace Test\Unit;
 
 use PainlessPHP\Filesystem\RecursiveFilesystemIterator;
 use PHPUnit\Framework\TestCase;
+use InvalidArgumentException;
 
 /**
  * @covers RecursiveFilesystemIterator
@@ -13,7 +14,7 @@ class RecursiveFilesystemIteratorTest extends TestCase
 {
     public function testSupplyingInvalidPathThrowsException()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
          new RecursiveFilesystemIterator('foobar');
     }
 
@@ -25,7 +26,9 @@ class RecursiveFilesystemIteratorTest extends TestCase
             'recursive/dir1',
             'recursive/dir1/file1_in_dir1',
             'recursive/dir2',
+            'recursive/dir2/file2_in_dir2',
             'recursive/dir3',
+            'recursive/dir3/file3_in_dir3',
         ];
 
         foreach($iterator as $file) {
@@ -42,14 +45,19 @@ class RecursiveFilesystemIteratorTest extends TestCase
         $result = [];
         $expected = [
             'recursive/dir2',
+            'recursive/dir2/file2_in_dir2',
             'recursive/dir3',
+            'recursive/dir3/file3_in_dir3',
+
         ];
 
         foreach($iterator as $file) {
 
             $relativePath = $file->getRelativePath(dirname($iterator->getPath()));
+            var_dump($relativePath);
 
             if($relativePath === 'recursive/dir1') {
+                var_dump('SKIP');
                 $iterator->skipDirectory();
                 continue;
             }

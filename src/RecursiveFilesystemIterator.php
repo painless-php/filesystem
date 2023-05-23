@@ -49,10 +49,6 @@ class RecursiveFilesystemIterator implements Iterator
     public function current(): FilesystemObject|array
     {
         $current = FilesystemObject::createFromPath($this->getCurrentIterator()->current());
-
-        /* while($current->getBasename() === '.' || $current->getBasename() === '..') { */
-        /*     $current = $this->skipFile(); */
-        /* } */
         $fullPath = $current->getPathname();
 
         if($current->isDir()) {
@@ -62,6 +58,7 @@ class RecursiveFilesystemIterator implements Iterator
         If($this->returnMapping) {
             return [$current->getRelativePath(basename($this->path)), $fullPath];
         }
+        var_dump($this->dirsToScan);
 
         return $current;
     }

@@ -12,21 +12,16 @@ composer require painless-php/filesystem
 
 #### Core
 
-* PainlessPHP\Filesystem\Filesystem
-* PainlessPHP\Filesystem\FilesystemObject
-    * PainlessPHP\Filesystem\File
-    * PainlessPHP\Filesystem\Directory
-* PainlessPHP\Filesystem\FilesystemPermissions
-
-#### Testing
-
-* PainlessPHP\Filesystem\Concern\DeletesTestOutput
+* Filesystem
+* FilesystemObject
+    * File
+    * Directory
 
 #### Exception
 
-* PainlessPHP\Filesystem\Exception\FilesystemException
-    * PainlessPHP\Filesystem\Exception\FileNotFoundException
-    * PainlessPHP\Filesystem\Exception\FilesystemPermissionException
+* FilesystemException
+    * FileNotFoundException
+    * FilesystemPermissionException
 
 ## Development
 
