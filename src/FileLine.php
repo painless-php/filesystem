@@ -6,16 +6,17 @@ use PainlessPHP\Filesystem\Exception\FilesystemException;
 
 class FileLine
 {
-    private $file;
-    private $number;
-    private $position;
-    private $content;
+    private File $file;
+    private int $number;
+    private int $position;
+    private ?string $content;
 
-    public function __construct(File $file, int $number, int $position)
+    public function __construct(File $file, int $lineNumber, int $pointerStartPosition, string $content = null)
     {
-        $this->file = $file;
-        $this->number = $number;
-        $this->position = $position;
+        $this->file = $file instanceof File ? $file : new File($file);
+        $this->number = $lineNumber;
+        $this->position = $pointerStartPosition;
+        $this->content = $content;
     }
 
     /**
@@ -31,7 +32,7 @@ class FileLine
      * Get the file pointer position for start of the line
      *
      */
-    public function getStartPosition() : int
+    public function getFilePointerStartPosition() : int
     {
         return $this->position;
     }
@@ -40,27 +41,18 @@ class FileLine
      * Get the file pointer postion for end of the line
      *
      */
-    public function getEndPosition() : int
+    public function getFilePointerEndPosition() : int
     {
-        return $this->position + strlen($this->getContent());
+        return $this->position + mb_strlen($this->getContent());
     }
 
     /**
      * Get the line number
      *
      */
-    public function getNumber() : int
+    public function getLineNumber() : int
     {
         return $this->number;
-    }
-
-    /**
-     * Set line content
-     *
-     */
-    public function setContent(string $content)
-    {
-        $this->content = $content;
     }
 
     /**
@@ -70,15 +62,7 @@ class FileLine
     public function getContent() : string
     {
         if($this->content === null) {
-            $stream = $this->openStream(FilesystemStreamMode::Read);
-            $content = fgets($stream);
-
-            if($content === false) {
-                $msg = "Could not read content at offset $this->position";
-                throw new FilesystemException($msg, $this->file->getPath());
-            }
-
-            fclose($stream);
+            $this->content = $this->loadContent();
         }
 
         return $this->content;
@@ -94,14 +78,14 @@ class FileLine
         $meta = stream_get_meta_data($tmp);
 
         foreach($this->file as $line) {
-            if($line->getNumber() === $this->number) {
+            if($line->getLineNumber() === $this->number) {
                 fwrite($tmp, $content);
             }
             fwrite($tmp, (string)$line);
         }
 
         $tempFile = new File($meta['uri']);
-        $this->file->writeLines($tempFile->getLines());
+        $this->file->writeLines($tempFile->readLines());
 
         fclose($tmp);
     }
@@ -120,5 +104,19 @@ class FileLine
         }
 
         return $stream;
+    }
+
+    private function loadContent() : string
+    {
+        $stream = $this->openStream(FilesystemStreamMode::Read);
+        $content = fgets($stream);
+
+        if($content === false) {
+            $msg = "Could not read content at offset $this->position";
+            throw new FilesystemException($msg, $this->file->getPath());
+        }
+
+        fclose($stream);
+        return $content;
     }
 }

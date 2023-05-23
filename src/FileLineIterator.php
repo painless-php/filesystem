@@ -10,8 +10,8 @@ class FileLineIterator implements SeekableIterator
     private File $file;
     private mixed $stream;
     private int $currentLineNumber;
-    private bool $readEmptyLines;
-    private bool $stripLineEndings; // TODO
+    private bool $readEmptyLines; // TODO: let iterator skip empty lines
+    private bool $stripLineEndings; // TODO: strip line endings from read lines
 
     public function __construct(File|string $file, $readEmptyLines = false, bool $stripLineEndings = true)
     {
@@ -63,8 +63,12 @@ class FileLineIterator implements SeekableIterator
 
     public function current(): mixed
     {
-        $line = new FileLine($this->file, $this->currentLineNumber + 1, ftell($this->getStream()));
-        $line->setContent(fgets($this->getStream()));
+        $line = new FileLine(
+            file: $this->file,
+            lineNumber: $this->currentLineNumber + 1,
+            pointerStartPosition: ftell($this->getStream()),
+            content: fgets($this->getStream())
+        );
 
         return $line;
     }
