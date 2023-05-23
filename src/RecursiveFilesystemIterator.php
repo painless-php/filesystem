@@ -58,7 +58,6 @@ class RecursiveFilesystemIterator implements Iterator
         If($this->returnMapping) {
             return [$current->getRelativePath(basename($this->path)), $fullPath];
         }
-        var_dump($this->dirsToScan);
 
         return $current;
     }
