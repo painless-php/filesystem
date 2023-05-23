@@ -11,18 +11,6 @@ use Traversable;
 class File extends FilesystemObject implements IteratorAggregate
 {
     /**
-     * Create a new temporary file
-     *
-     */
-    public static function createTemporary() : self
-    {
-        $tmp = tmpfile();
-        $meta = stream_get_meta_data($tmp);
-
-        return new self($meta['uri']);
-    }
-
-    /**
      * Create the file on the filesystem
      *
      */
@@ -33,6 +21,18 @@ class File extends FilesystemObject implements IteratorAggregate
         }
 
         file_put_contents($this->getPathname(), '', $overwrite ? 0 : FILE_APPEND);
+    }
+
+    /**
+     * Create a new temporary file
+     *
+     */
+    public static function createTemporary() : self
+    {
+        $tmp = tmpfile();
+        $meta = stream_get_meta_data($tmp);
+
+        return new self($meta['uri']);
     }
 
     /**
