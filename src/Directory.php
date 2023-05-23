@@ -6,8 +6,10 @@ use PainlessPHP\Filesystem\Exception\FilesystemPermissionException;
 use PainlessPHP\Filesystem\Exception\FileNotFoundException;
 use PainlessPHP\Filesystem\Exception\FilesystemException;
 use FilesystemIterator;
+use IteratorAggregate;
+use Traversable;
 
-class Directory extends FilesystemObject
+class Directory extends FilesystemObject implements IteratorAggregate
 {
     /**
      * Create directory on the filesystem
@@ -64,7 +66,7 @@ class Directory extends FilesystemObject
     {
         $size = filesize($this->getPathname());
 
-        foreach($this->getContents() as $child)  {
+        foreach($this as $child)  {
             $size += $child->getSize();
         }
 
@@ -200,7 +202,7 @@ class Directory extends FilesystemObject
 
         foreach(array_diff(scandir($this->getPathname()), ['.', '..']) as $relativePath) {
             $realPath = "{$this->getPathname()}/{$relativePath}";
-            $child = is_file($realPath) ? new File($realPath) : new self($realPath);
+            $child = FilesystemObject::createFromPath($realPath);
             $children[] = $child;
         }
 
@@ -223,5 +225,10 @@ class Directory extends FilesystemObject
     public function rename(string $newName)
     {
         $this->move(dirname($this->getPathname()) . "/{$newName}", true);
+    }
+
+    public function getIterator(): Traversable
+    {
+        return new RecursiveFilesystemIterator($this->getPath());
     }
 }
