@@ -147,14 +147,6 @@ abstract class FilesystemObject extends SplFileInfo
     abstract public function exists() : bool;
 
     /**
-     * Get the size of the object in filesystem in bytes
-     *
-     * @return int $size filesize in bytes
-     *
-     */
-    abstract public function getSize() : int;
-
-    /**
      * Create the object on the filesystem
      *
      * @param bool $recursive Whether parent directories should be created
