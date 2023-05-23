@@ -74,6 +74,8 @@ class FileLine
      */
     public function writeContent(string $content)
     {
+        // TODO support editing in-memory
+
         $tmp = tmpfile();
         $meta = stream_get_meta_data($tmp);
 

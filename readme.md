@@ -27,7 +27,10 @@ composer require painless-php/filesystem
 
 Filesystem::findUpwards() // support providing filepath and then dirname()
 Filesystem::findDownwards() // ^
-FilesysmteObject::getRelativePath() should work with both children and parent paths
+FilesystemObject::getRelativePath() should work with both children and parent paths
+
+ComposerJson class
+Env editable class
 
 * Make sure that proper errors are thrown when trying to operate on a non-existent file
 * Make sure that permission errors throw correct exceptions
