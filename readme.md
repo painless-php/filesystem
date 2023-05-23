@@ -25,19 +25,22 @@ composer require painless-php/filesystem
 
 ## TODO
 
-Filesystem::findUpwards() // support providing filepath and then dirname()
-Filesystem::findDownwards() // ^
-FilesystemObject::getRelativePath() should work with both children and parent paths
+* Filesystem::findUpwards() // support providing filepath and then dirname()
+* Filesystem::findDownwards() // ^
+* FilesystemObject::getRelativePath() should work with both children and parent paths
+* FilesystemObject::getAbsolutePath() needs a rewrite
 
-RecursiveFilesystemIterator
-* support exclusion of files (support patterns?)
-* fix skipDirectory (support levels?)
+* FileLine::writeContent() is really inefficient. Support in-memory modification?
 
-Use iterator for Directory recursive deleteContents
-Use iterator for Directory recursive copy
+* RecursiveFilesystemIterator
+    * support exclusion of files (support patterns?)
+    * fix skipDirectory (support levels?)
 
-ComposerJson class
-Env editable class
+* Use iterator for Directory recursive deleteContents
+* Use iterator for Directory recursive copy
+
+* ComposerJson class
+* Env editable class
 
 * Make sure that proper errors are thrown when trying to operate on a non-existent file
 * Make sure that permission errors throw correct exceptions
