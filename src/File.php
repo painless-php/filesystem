@@ -98,8 +98,13 @@ class File extends FilesystemObject implements IteratorAggregate
     }
 
     /**
-     * @return int $size filesize in bytes
+     *  Get the size of the file.
+     *
+     * @override
      * @throws FileNotFoundException
+     *
+     * @return int $size filesize in bytes
+     *
      */
     public function getSize() : int
     {
@@ -110,14 +115,9 @@ class File extends FilesystemObject implements IteratorAggregate
         return filesize($this->getPathname());
     }
 
-    public function getLines() : FileLineIterator
+    public function readLines() : FileLineIterator
     {
         return new FileLineIterator($this);
-    }
-
-    public function getPath() : string
-    {
-        return dirname($this->getPathname());
     }
 
     public function getContents() : string
@@ -141,7 +141,7 @@ class File extends FilesystemObject implements IteratorAggregate
             return;
         }
 
-        $this->writeLines($content instanceof self ? $content->getLines() : $content);
+        $this->writeLines($content instanceof self ? $content->readLines() : $content);
     }
 
     public function writeLines(FileLineIterator $lines)
