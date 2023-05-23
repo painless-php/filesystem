@@ -4,13 +4,10 @@ namespace Test\Unit;
 
 use PHPUnit\Framework\TestCase;
 use PainlessPHP\Filesystem\File;
-use PainlessPHP\Filesystem\Concern\DeletesTestOutput;
 use PainlessPHP\Filesystem\Filesystem;
 
 class FileLineIteratorTest extends TestCase
 {
-    use DeletesTestOutput;
-
     private $file;
 
     public function setUp() : void

@@ -7,13 +7,10 @@ use PainlessPHP\Filesystem\File;
 use PainlessPHP\Filesystem\Exception\FileNotFoundException;
 use PainlessPHP\Filesystem\Exception\TargetNotFileException;
 use PainlessPHP\Filesystem\Exception\PermissionException;
-use PainlessPHP\Filesystem\Concern\DeletesTestOutput;
 use PainlessPHP\Filesystem\Filesystem;
 
 class FileTest extends TestCase
 {
-    use DeletesTestOutput;
-
 	private $file;
 
     public function setUp() : void

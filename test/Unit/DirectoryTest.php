@@ -3,15 +3,12 @@
 namespace Test\Unit;
 
 use PHPUnit\Framework\TestCase;
-use PainlessPHP\Filesystem\Concern\DeletesTestOutput;
 use PainlessPHP\Filesystem\Directory;
 use PainlessPHP\Filesystem\Exception\FilesystemException;
 use PainlessPHP\Filesystem\Filesystem;
 
 class DirectoryTest extends TestCase
 {
-    use DeletesTestOutput;
-
     public function testCreateCreatesDirectory()
     {
         $path = Filesystem::testDirectoryPath('output/directory');
