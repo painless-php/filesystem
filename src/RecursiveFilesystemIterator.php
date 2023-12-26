@@ -30,12 +30,6 @@ class RecursiveFilesystemIterator implements Iterator
         return $this->path;
     }
 
-   /**
-    * Set the directory path of the iterator
-    *
-    * @param string $path
-    *
-    */
     private function setPath(string $path)
     {
         if(! is_dir($path)) {
