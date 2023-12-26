@@ -2,9 +2,12 @@
 
 namespace PainlessPHP\Filesystem;
 
+use Closure;
 use FilesystemIterator;
 use InvalidArgumentException;
 use Iterator;
+use PainlessPHP\Filesystem\Contract\FilesystemFilter;
+use PainlessPHP\Filesystem\Filter\ClosureFilesystemFilter;
 use RecursiveDirectoryIterator;
 use SplFileInfo;
 
@@ -18,11 +21,23 @@ class RecursiveFilesystemIterator implements Iterator
     private bool $valid;
     private bool $returnMapping;
 
-    public function __construct(string $path, bool $returnMapping = false)
+    /**
+     * @var array<FilesystemFilter> $scanFilters
+     */
+    private array $scanFilters;
+
+    /**
+     * @var array<FilesystemFilter> $filters
+     */
+    private array $itemFilters;
+
+    public function __construct(string $path, bool $returnMapping = false, array $scanFilters = [], array $itemFilters = [])
     {
         $this->setPath($path);
         $this->rewind();
         $this->returnMapping = $returnMapping;
+        $this->setScanFilters($scanFilters);
+        $this->setItemFilters($itemFilters);
     }
 
     public function getPath() : string
@@ -40,13 +55,42 @@ class RecursiveFilesystemIterator implements Iterator
         $this->path = $path;
     }
 
+    private function validateFiltersArg(FilesystemFilter|Closure ...$filters)
+    {
+        return array_map(fn($filter) => $filter instanceof Closure ? new ClosureFilesystemFilter($filter) : $filter, $filters);
+    }
+
+    public function setScanFilters(array $filters)
+    {
+        $this->scanFilters = $this->validateFiltersArg(...$filters);
+    }
+
+    public function getScanFilters() : array
+    {
+        return $this->scanFilters;
+    }
+
+    public function setItemFilters(array $filters)
+    {
+        $this->itemFilters = $this->validateFiltersArg(...$filters);
+    }
+
+    public function getChildFilters() : array
+    {
+        return $this->itemFilters;
+    }
+
     public function current(): FilesystemObject|array
     {
         $current = FilesystemObject::createFromPath($this->getCurrentIterator()->current());
         $fullPath = $current->getPathname();
 
-        if($current->isDir()) {
+        if($current->isDir() && $this->shouldScan($current)) {
             $this->dirsToScan[$fullPath] = $fullPath;
+        }
+
+        if($this->shouldFilterItem($current)) {
+            $current = $this->skipCurrent();
         }
 
         If($this->returnMapping) {
@@ -86,7 +130,7 @@ class RecursiveFilesystemIterator implements Iterator
         return $this->valid && $this->getCurrentIterator()->valid();
     }
 
-    private function skipFile() : SplFileInfo
+    private function skipCurrent() : SplFileInfo
     {
         $this->skipNext = true;
         $this->next();
@@ -129,5 +173,32 @@ class RecursiveFilesystemIterator implements Iterator
 
         $dirPath = array_shift($this->dirsToScan);
         return new RecursiveDirectoryIterator($dirPath, FilesystemIterator::SKIP_DOTS);
+    }
+
+    private function shouldScan(FilesystemObject $filesystemObject) : bool
+    {
+        return ! $this->runFilters($filesystemObject, $this->scanFilters);
+    }
+
+    private function shouldFilterItem(FilesystemObject $filesystemObject) : bool
+    {
+        return $this->runFilters($filesystemObject, $this->itemFilters);
+    }
+
+    /**
+     * @param FilesystemObject $filesystemObject
+     * @param array<FilesystemFilter> $filters
+     *
+     * @return bool
+     */
+    private function runFilters(FilesystemObject $filesystemObject, array $filters) : bool
+    {
+        foreach($filters as $filter) {
+            if(! $filter->shouldPass($filesystemObject)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

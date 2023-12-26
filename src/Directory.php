@@ -7,10 +7,24 @@ use PainlessPHP\Filesystem\Exception\FileNotFoundException;
 use PainlessPHP\Filesystem\Exception\FilesystemException;
 use FilesystemIterator;
 use IteratorAggregate;
-use Traversable;
+use PainlessPHP\Filesystem\Contract\FilesystemFilter;
 
 class Directory extends FilesystemObject implements IteratorAggregate
 {
+    public static function createFromPath(string $pathname): self
+    {
+        if(is_file($pathname)) {
+            $msg = "Target path '$pathname' is a file";
+            throw new FilesystemException($msg);
+        }
+
+        if(! file_exists($pathname)) {
+            throw FileNotFoundException::createFromPath($pathname);
+        }
+
+        return new self($pathname);
+    }
+
     /**
      * Create directory on the filesystem
      *
@@ -198,10 +212,27 @@ class Directory extends FilesystemObject implements IteratorAggregate
     /**
      * Get children filesystem objects
      *
+     * @param bool $recursive
+     * @param RecursiveFilesystemIterator $iterator
+     *
+     * @return array<FilesystemObject> $contents
+     *
      */
-    public function getContents() : array
+    public function getContents(bool $recursive = false, array $iteratorArguments = []) : array
     {
         $children = [];
+        $iterator = $this->getIterator($iteratorArguments);
+
+        if(! $recursive) {
+            // Do not scan anything
+            $iterator->setScanFilters([fn($file) => false]);
+        }
+
+        foreach($iterator as $item) {
+            $children[] = $item;
+        }
+
+        return $children;
 
         foreach(array_diff(scandir($this->getPathname()), ['.', '..']) as $relativePath) {
             $realPath = "{$this->getPathname()}/{$relativePath}";
@@ -230,8 +261,9 @@ class Directory extends FilesystemObject implements IteratorAggregate
         $this->move(dirname($this->getPathname()) . "/{$newName}", true);
     }
 
-    public function getIterator(): Traversable
+    public function getIterator(array $args = []): RecursiveFilesystemIterator
     {
-        return new RecursiveFilesystemIterator($this->getPath());
+        $args = [...$args, 'path' => $this->getPathname()];
+        return new RecursiveFilesystemIterator(...$args);
     }
 }

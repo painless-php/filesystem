@@ -23,17 +23,18 @@ composer require painless-php/filesystem
     * FileNotFoundException
     * FilesystemPermissionException
 
+#### Contract
+
+* FilesystemFilter
+
 ## TODO
 
-* Filesystem::findUpwards() // support providing filepath and then dirname()
-* Filesystem::findDownwards() // ^
 * FilesystemObject::getRelativePath() should work with both children and parent paths
 * FilesystemObject::getAbsolutePath() needs a rewrite
 
 * FileLine::writeContent() is really inefficient. Support in-memory modification?
 
 * RecursiveFilesystemIterator
-    * support exclusion of files (support patterns?)
     * fix skipDirectory (support levels?)
 
 * Use iterator for Directory recursive deleteContents
@@ -47,3 +48,6 @@ composer require painless-php/filesystem
 * use file's real path for exceptions?
 
 * Directory::delete allow exclusion by relative path and absolute path
+
+## Notes
+- isRoot() will probably not work on windows (as well as functions that rely on it like findUpwards)

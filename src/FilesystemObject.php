@@ -2,6 +2,7 @@
 
 namespace PainlessPHP\Filesystem;
 
+use PainlessPHP\Filesystem\Exception\FileNotFoundException;
 use PainlessPHP\Filesystem\Exception\FilesystemException;
 use SplFileInfo;
 
@@ -26,7 +27,7 @@ abstract class FilesystemObject extends SplFileInfo
      * object the path corresponds to on the filesystem
      *
      */
-    public static function createFromPath(string $pathname) : self
+    public static function createFromPath(string $pathname) : File|Directory
     {
         if(is_file($pathname)) {
             return new File($pathname);
@@ -36,8 +37,7 @@ abstract class FilesystemObject extends SplFileInfo
             return new Directory($pathname);
         }
 
-        $msg = 'Filesystem object with the given path does not exist';
-        throw new FilesystemException($msg, $pathname);
+        throw FileNotFoundException::createFromPath($pathname);
     }
 
     /**
@@ -81,6 +81,14 @@ abstract class FilesystemObject extends SplFileInfo
     {
         // TODO should return null if at top level
         return new Directory(dirname($this->getPathname()));
+    }
+
+    /**
+     * Check if the filesystem object path is equal to filesystem root
+     */
+    public function isRoot() : bool
+    {
+        return $this->getPathname() === '/';
     }
 
     /**

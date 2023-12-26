@@ -10,6 +10,20 @@ use Traversable;
 
 class File extends FilesystemObject implements IteratorAggregate
 {
+    public static function createFromPath(string $pathname): self
+    {
+        if(is_dir($pathname)) {
+            $msg = "Target path '$pathname' is a directory";
+            throw new FilesystemException($msg);
+        }
+
+        if(! file_exists($pathname)) {
+            throw FileNotFoundException::createFromPath($pathname);
+        }
+
+        return new self($pathname);
+    }
+
     /**
      * Create the file on the filesystem
      *
