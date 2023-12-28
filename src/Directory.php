@@ -86,56 +86,43 @@ class Directory extends FilesystemObject
     }
 
     /**
-     * Copy the filesystem object
+     * Copy the filesystem object to target detination
      *
      */
     public function copy(string $destination, bool $recursive = false)
     {
         (new self($destination))->create(recursive: $recursive);
 
-        // TODO use iterator
-
-        foreach($this->getContents(recursive: $recursive) as $object) {
+        foreach($this->getIterator(['recursive' => $recursive]) as $object) {
             $object->copy("{$destination}/" . basename($object->getPathname()));
         }
     }
 
     /**
-     * Move the filesystem object
+     * Move the filesystem object to target destination
      *
      */
     public function move(string $destination, bool $recursive = false)
     {
         $this->copy($destination, $recursive);
-        $this->delete(true);
+        $this->delete(new DirectoryContentIteratorConfiguration(recursive: true));
     }
 
     /**
-     * Delete filesystem object
-     *
-     *
-     * @param bool $recursive Whether subdirectories and their contents should be
-     * deleted recursively
-     *
-     * @param array $exclude List of file / directory names to save from
-     * deletion
-     *
-     * @param string|null $root path to the topmost level, should not be used
-     * outside class
+     * Delete the directory
      *
      * @return bool $deleted Whether the directory was actually deleted
      * (some files may be spared if $exclude parameter is used)
-     * @throws FileNotFoundException
-     * @throws FilesystemException
+     *
      */
-    public function delete(bool $recursive = false, array $exclude = [], ?string $root = null) : bool
+    public function delete(DirectoryContentIteratorConfiguration|array $config = []) : bool
     {
-        if(! $recursive && ! $this->isEmpty()) {
+        if(! $config->recursive && ! $this->isEmpty()) {
             $msg = "Directory is not empty, please use the recursive parameter if you wish to delete the directory along with it's contents";
             throw new FilesystemException($msg, $this->getPathname());
         }
 
-        if($this->deleteContents(true, $exclude)) {
+        if($this->deleteContents($config)) {
             rmdir($this->getPathname());
             return true;
         }
@@ -144,57 +131,18 @@ class Directory extends FilesystemObject
     }
 
     /**
-     * Delete contents of the object.
-     *
-     * @param bool $recursive Whether contents of subdirectories should be
-     * deleted recursively
-     *
-     * @param array $exclude List of file / directory names to save from
-     * deletion
-     *
-     * @param string|null $root path to the topmost level, should not be used
-     * outside class
+     * Delete contents of the directory
      *
      * @return bool $isEmpty Whether directory is empty after deletion (some
      * files may be spared if $exclude parameter is used)
      * e
      */
-    public function deleteContents(bool $recursive = false, array $exclude = [], ?string $root = null) : bool
+    public function deleteContents(DirectoryContentIteratorConfiguration|array $config = []) : bool
     {
-        // $config = new DirectoryContentIterator(
-        //     scanFilters: [
-        //         function()
-        //     ]
-        // );
-        // foreach($this->getIterator($config))
-
-
-
-        // TODO use iterator
-        if($root === null) {
-            $root = $this->getAbsolutePath();
-        }
-
         $isEmpty = true;
 
-        foreach($this->getContents() as $object) {
-
-            // Skip deletion of non recursive dirs
-            if(! $recursive && $object->isDir()) {
-                continue;
-            }
-
-            // Skip deletion of excluded files
-            if(
-                in_array($object->getFilename(), $exclude) ||
-                in_array($object->getRelativePath($root), $exclude) ||
-                in_array($object->getAbsolutePath(), $exclude)
-            ) {
-                $isEmpty = false;
-                continue;
-            }
-
-            if($object->delete(true, $exclude)) {
+        foreach($this->getIterator($config) as $object) {
+            if(! $object->delete($config)) {
                 $isEmpty = false;
             }
         }

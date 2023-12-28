@@ -43,7 +43,7 @@ class DirectoryTest extends TestCase
             'file_in_dir_3.txt'
         ];
 
-        $contents = $directory->getContents(recursive: true);
+        $contents = $directory->getContents(['recursive' =>  true]);
         $contents = array_map(fn($file) => $file->getFilename(), $contents);
         sort($contents);
 
@@ -61,14 +61,12 @@ class DirectoryTest extends TestCase
             'file_in_dir_3.txt'
         ];
 
-        $contents = $directory->getContents(
-            recursive: true,
-            iteratorArguments: [
-                'contentFilters' => [
-                    new FileFilesystemFilter
-                ]
+        $contents = $directory->getContents([
+            'recursive' => true,
+            'contentFilters' => [
+                new FileFilesystemFilter
             ]
-        );
+        ]);
 
         $contents = array_map(fn($file) => $file->getFilename(), $contents);
         sort($contents);
@@ -83,7 +81,7 @@ class DirectoryTest extends TestCase
         $directory->copy($outputPath);
 
         $outputDir = Directory::createFromPath($outputPath);
-        $contents = $outputDir->getContents(recursive: true);
+        $contents = $outputDir->getContents(['recursive' => true]);
         $contents = array_map(fn($file) => $file->getFilename(), $contents);
 
         $expected = [
