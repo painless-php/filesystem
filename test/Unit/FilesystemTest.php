@@ -5,7 +5,7 @@ namespace Test\Unit;
 use PainlessPHP\Filesystem\Exception\FileNotFoundException;
 use PainlessPHP\Filesystem\Filesystem;
 use PHPUnit\Framework\TestCase;
-use Test\Concern\TestPaths;
+use Test\Trait\TestPaths;
 
 class FilesystemTest extends TestCase
 {

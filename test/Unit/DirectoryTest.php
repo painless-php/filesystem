@@ -5,7 +5,7 @@ namespace Test\Unit;
 use PainlessPHP\Filesystem\Directory;
 use PainlessPHP\Filesystem\Filter\FileFilesystemFilter;
 use PHPUnit\Framework\TestCase;
-use Test\Concern\TestPaths;
+use Test\Trait\TestPaths;
 
 class DirectoryTest extends TestCase
 {

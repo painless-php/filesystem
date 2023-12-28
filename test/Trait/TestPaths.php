@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Concern;
+namespace Test\Trait;
 
 use PainlessPHP\Filesystem\Filesystem;
 

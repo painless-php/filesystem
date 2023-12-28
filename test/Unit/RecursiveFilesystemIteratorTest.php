@@ -5,7 +5,7 @@ namespace Test\Unit;
 use PainlessPHP\Filesystem\FilesystemObject;
 use PainlessPHP\Filesystem\RecursiveFilesystemIterator;
 use PHPUnit\Framework\TestCase;
-use Test\Concern\TestPaths;
+use Test\Trait\TestPaths;
 
 class RecursiveFilesystemIteratorTest extends TestCase
 {
