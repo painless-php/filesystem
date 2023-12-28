@@ -23,18 +23,20 @@ composer require painless-php/filesystem
     * FileNotFoundException
     * FilesystemPermissionException
 
-#### Contract
+#### Interface
 
 * FilesystemFilter
 
 ## TODO
+
+* Directory getContentNames()
 
 * FilesystemObject::getRelativePath() should work with both children and parent paths
 * FilesystemObject::getAbsolutePath() needs a rewrite
 
 * FileLine::writeContent() is really inefficient. Support in-memory modification?
 
-* RecursiveFilesystemIterator
+* DirectoryContentIterator
     * fix skipDirectory (support levels?)
 
 * Use iterator for Directory recursive deleteContents

@@ -2,16 +2,14 @@
 
 namespace PainlessPHP\Filesystem;
 
-use Closure;
 use FilesystemIterator;
 use InvalidArgumentException;
 use Iterator;
-use PainlessPHP\Filesystem\Contract\FilesystemFilter;
-use PainlessPHP\Filesystem\Filter\ClosureFilesystemFilter;
+use PainlessPHP\Filesystem\Interface\FilesystemFilter;
 use RecursiveDirectoryIterator;
 use SplFileInfo;
 
-class RecursiveFilesystemIterator implements Iterator
+class DirectoryContentIterator implements Iterator
 {
     private string $path;
     private int $currentKey;
@@ -19,25 +17,22 @@ class RecursiveFilesystemIterator implements Iterator
     private bool $skipNext;
     private array $dirsToScan;
     private bool $valid;
-    private bool $returnMapping;
+    private DirectoryContentIteratorConfiguration $config;
 
-    /**
-     * @var array<FilesystemFilter> $scanFilters
-     */
-    private array $scanFilters;
-
-    /**
-     * @var array<FilesystemFilter> $filters
-     */
-    private array $itemFilters;
-
-    public function __construct(string $path, bool $returnMapping = false, array $scanFilters = [], array $itemFilters = [])
+    public function __construct(string $path, array|DirectoryContentIteratorConfiguration $config = [])
     {
         $this->setPath($path);
         $this->rewind();
-        $this->returnMapping = $returnMapping;
-        $this->setScanFilters($scanFilters);
-        $this->setItemFilters($itemFilters);
+        $this->setConfig($config);
+    }
+
+    private function setConfig(array|DirectoryContentIteratorConfiguration $config)
+    {
+        if(is_array($config)) {
+            $config = new DirectoryContentIteratorConfiguration(...$config);
+        }
+
+        $this->config = $config;
     }
 
     public function getPath() : string
@@ -55,45 +50,20 @@ class RecursiveFilesystemIterator implements Iterator
         $this->path = $path;
     }
 
-    private function validateFiltersArg(FilesystemFilter|Closure ...$filters)
-    {
-        return array_map(fn($filter) => $filter instanceof Closure ? new ClosureFilesystemFilter($filter) : $filter, $filters);
-    }
-
-    public function setScanFilters(array $filters)
-    {
-        $this->scanFilters = $this->validateFiltersArg(...$filters);
-    }
-
-    public function getScanFilters() : array
-    {
-        return $this->scanFilters;
-    }
-
-    public function setItemFilters(array $filters)
-    {
-        $this->itemFilters = $this->validateFiltersArg(...$filters);
-    }
-
-    public function getChildFilters() : array
-    {
-        return $this->itemFilters;
-    }
-
     public function current(): FilesystemObject|array
     {
         $current = FilesystemObject::createFromPath($this->getCurrentIterator()->current());
         $fullPath = $current->getPathname();
 
-        if($current->isDir() && $this->shouldScan($current)) {
+        if($current->isDir() && $this->config->recursive && $this->shouldScan($current)) {
             $this->dirsToScan[$fullPath] = $fullPath;
         }
 
-        if($this->shouldFilterItem($current)) {
+        if($this->shouldFilterContent($current)) {
             $current = $this->skipCurrent();
         }
 
-        If($this->returnMapping) {
+        If($this->config->returnMapping) {
             return [$current->getRelativePath(basename($this->path)), $fullPath];
         }
 
@@ -150,6 +120,11 @@ class RecursiveFilesystemIterator implements Iterator
         $this->currentIterator = $next;
     }
 
+    public function getConfiguration() : DirectoryContentIteratorConfiguration
+    {
+        return $this->config;
+    }
+
     private function getCurrentIterator() : RecursiveDirectoryIterator
     {
         $this->currentIterator = $this->currentIterator ?? new RecursiveDirectoryIterator($this->path, FilesystemIterator::SKIP_DOTS);
@@ -177,12 +152,12 @@ class RecursiveFilesystemIterator implements Iterator
 
     private function shouldScan(FilesystemObject $filesystemObject) : bool
     {
-        return ! $this->runFilters($filesystemObject, $this->scanFilters);
+        return ! $this->runFilters($filesystemObject, $this->config->scanFilters);
     }
 
-    private function shouldFilterItem(FilesystemObject $filesystemObject) : bool
+    private function shouldFilterContent(FilesystemObject $filesystemObject) : bool
     {
-        return $this->runFilters($filesystemObject, $this->itemFilters);
+        return $this->runFilters($filesystemObject, $this->config->contentFilters);
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace PainlessPHP\Filesystem\Contract;
+namespace PainlessPHP\Filesystem\Interface;
 
 use PainlessPHP\Filesystem\FilesystemObject;
 

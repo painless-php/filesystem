@@ -48,6 +48,7 @@ abstract class FilesystemObject extends SplFileInfo
     public function getAbsolutePath() : string
     {
         // TODO
+        return $this->getPathname();
     }
 
     /**

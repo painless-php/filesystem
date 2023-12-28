@@ -3,17 +3,18 @@
 namespace Test\Unit;
 
 use PainlessPHP\Filesystem\FilesystemObject;
-use PainlessPHP\Filesystem\RecursiveFilesystemIterator;
+use PainlessPHP\Filesystem\DirectoryContentIterator;
+use PainlessPHP\Filesystem\DirectoryContentIteratorConfiguration;
 use PHPUnit\Framework\TestCase;
 use Test\Trait\TestPaths;
 
-class RecursiveFilesystemIteratorTest extends TestCase
+class DirectoryContentIteratorTest extends TestCase
 {
     use TestPaths;
 
     public function testIteratorIteratesThroughAllFilesAndDirectories()
     {
-        $iterator = new RecursiveFilesystemIterator($this->levelThreeDirsPath());
+        $iterator = new DirectoryContentIterator($this->levelThreeDirsPath());
         $files = [];
 
         foreach($iterator as $file) {
@@ -31,9 +32,18 @@ class RecursiveFilesystemIteratorTest extends TestCase
 
     public function testIteratorSkipsThroughFilteredScansFilesystemObjects()
     {
-        $iterator = new RecursiveFilesystemIterator(path: $this->levelThreeDirsPath(), scanFilters: [function(FilesystemObject $file) {
-            return $file->isFile();
-        }]);
+        $config = new DirectoryContentIteratorConfiguration(
+            scanFilters: [
+                function(FilesystemObject $file) {
+                    return $file->isFile();
+                }
+            ]
+        );
+
+        $iterator = new DirectoryContentIterator(
+            path: $this->levelThreeDirsPath(),
+            config: $config)
+        ;
 
         $files = [];
 
@@ -46,9 +56,16 @@ class RecursiveFilesystemIteratorTest extends TestCase
 
     public function testIteratorSkipsThroughFilteredItemsFilesystemObjects()
     {
-        $iterator = new RecursiveFilesystemIterator(path: $this->levelThreeDirsPath(), itemFilters: [function(FilesystemObject $file) {
-            return $file->isFile();
-        }]);
+        $iterator = new DirectoryContentIterator(
+            path: $this->levelThreeDirsPath(),
+            config: [
+                'contentFilters' => [
+                    function(FilesystemObject $file) {
+                        return $file->isFile();
+                    }
+                ]
+            ]
+        );
 
         $files = [];
 

@@ -11,6 +11,12 @@ class DirectoryTest extends TestCase
 {
     use TestPaths;
 
+    public function tearDown() : void
+    {
+        parent::tearDown();
+        $this->cleanOutput();
+    }
+
     public function testGetContentsReturnsFilesystemObjectsInDirectory()
     {
         $directory = Directory::createFromPath($this->levelThreeDirsPath());
@@ -58,7 +64,7 @@ class DirectoryTest extends TestCase
         $contents = $directory->getContents(
             recursive: true,
             iteratorArguments: [
-                'itemFilters' => [
+                'contentFilters' => [
                     new FileFilesystemFilter
                 ]
             ]
@@ -68,5 +74,47 @@ class DirectoryTest extends TestCase
         sort($contents);
 
         $this->assertSame($expected, $contents);
+    }
+
+    public function testCopyCopiesFirstLevelFilesAndDirectories()
+    {
+        $outputPath = $this->getOutputPath();
+        $directory = Directory::createFromPath($this->levelThreeDirsPath());
+        $directory->copy($outputPath);
+
+        $outputDir = Directory::createFromPath($outputPath);
+        $contents = $outputDir->getContents(recursive: true);
+        $contents = array_map(fn($file) => $file->getFilename(), $contents);
+
+        $expected = [
+            'file_in_base_dir',
+            '1'
+        ];
+
+        $this->assertSame($expected, $contents);
+    }
+
+    public function testCopyCopiesAllNestedFilesAndDirectoriesWhenRecursive()
+    {
+        // $outputPath = $this->getOutputPath();
+        // $directory = Directory::createFromPath($this->levelThreeDirsPath());
+        // $directory->copy($outputPath);
+
+        // $outputDir = Directory::createFromPath($outputPath);
+        // $contents = $outputDir->getContents(recursive: true);
+        // $contents = array_map(fn($file) => $file->getFilename(), $contents);
+        // sort($contents);
+
+        // $expected = [
+        //     '1',
+        //     '2',
+        //     '3',
+        //     'file_in_base_dir.txt',
+        //     'file_in_dir_1.txt',
+        //     'file_in_dir_2.txt',
+        //     'file_in_dir_3.txt'
+        // ];
+
+        // $this->assertSame($expected, $contents);
     }
 }

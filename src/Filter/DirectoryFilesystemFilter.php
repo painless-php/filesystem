@@ -2,7 +2,7 @@
 
 namespace PainlessPHP\Filesystem\Filter;
 
-use PainlessPHP\Filesystem\Contract\FilesystemFilter;
+use PainlessPHP\Filesystem\Interface\FilesystemFilter;
 use PainlessPHP\Filesystem\FilesystemObject;
 
 class DirectoryFilesystemFilter implements FilesystemFilter

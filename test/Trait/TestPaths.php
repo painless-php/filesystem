@@ -2,6 +2,7 @@
 
 namespace Test\Trait;
 
+use PainlessPHP\Filesystem\Directory;
 use PainlessPHP\Filesystem\Filesystem;
 
 trait TestPaths
@@ -12,6 +13,19 @@ trait TestPaths
     private function getTestInputPath(string ...$append) : string
     {
         return Filesystem::appendToPath(dirname(__DIR__), 'input', $this->getTestedClassShortName(), ...$append);
+    }
+
+    public function getOutputPath(string ...$append)
+    {
+        return Filesystem::appendToPath(dirname(__DIR__), 'output', ...$append);
+    }
+
+    private function cleanOutput()
+    {
+        Directory::createFromPath($this->getOutputPath())->deleteContents(
+            recursive: true,
+            exclude: ['.gitignore']
+        );
     }
 
     private function levelThreeDirsPath() : string

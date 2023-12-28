@@ -6,10 +6,8 @@ use PainlessPHP\Filesystem\Exception\FilesystemPermissionException;
 use PainlessPHP\Filesystem\Exception\FileNotFoundException;
 use PainlessPHP\Filesystem\Exception\FilesystemException;
 use FilesystemIterator;
-use IteratorAggregate;
-use PainlessPHP\Filesystem\Contract\FilesystemFilter;
 
-class Directory extends FilesystemObject implements IteratorAggregate
+class Directory extends FilesystemObject
 {
     public static function createFromPath(string $pathname): self
     {
@@ -93,13 +91,12 @@ class Directory extends FilesystemObject implements IteratorAggregate
      */
     public function copy(string $destination, bool $recursive = false)
     {
-        (new self($destination))->create($recursive);
+        (new self($destination))->create(recursive: $recursive);
 
         // TODO use iterator
 
-        foreach($this->getContents() as $object) {
-            $object->copy("{$destination}/" . basename($object->getPathname()()));
-            $object->delete();
+        foreach($this->getContents(recursive: $recursive) as $object) {
+            $object->copy("{$destination}/" . basename($object->getPathname()));
         }
     }
 
@@ -164,6 +161,15 @@ class Directory extends FilesystemObject implements IteratorAggregate
      */
     public function deleteContents(bool $recursive = false, array $exclude = [], ?string $root = null) : bool
     {
+        // $config = new DirectoryContentIterator(
+        //     scanFilters: [
+        //         function()
+        //     ]
+        // );
+        // foreach($this->getIterator($config))
+
+
+
         // TODO use iterator
         if($root === null) {
             $root = $this->getAbsolutePath();
@@ -174,13 +180,13 @@ class Directory extends FilesystemObject implements IteratorAggregate
         foreach($this->getContents() as $object) {
 
             // Skip deletion of non recursive dirs
-            if(! $recursive && $object->isDirectory()) {
+            if(! $recursive && $object->isDir()) {
                 continue;
             }
 
             // Skip deletion of excluded files
             if(
-                in_array($object->getName(), $exclude) ||
+                in_array($object->getFilename(), $exclude) ||
                 in_array($object->getRelativePath($root), $exclude) ||
                 in_array($object->getAbsolutePath(), $exclude)
             ) {
@@ -213,31 +219,18 @@ class Directory extends FilesystemObject implements IteratorAggregate
      * Get children filesystem objects
      *
      * @param bool $recursive
-     * @param RecursiveFilesystemIterator $iterator
+     * @param DirectoryContentIterator|array $config
      *
      * @return array<FilesystemObject> $contents
      *
      */
-    public function getContents(bool $recursive = false, array $iteratorArguments = []) : array
+    public function getContents(DirectoryContentIterator|array $config = []) : array
     {
         $children = [];
-        $iterator = $this->getIterator($iteratorArguments);
-
-        if(! $recursive) {
-            // Do not scan anything
-            $iterator->setScanFilters([fn($file) => false]);
-        }
+        $iterator = $this->getIterator(config: $config);
 
         foreach($iterator as $item) {
             $children[] = $item;
-        }
-
-        return $children;
-
-        foreach(array_diff(scandir($this->getPathname()), ['.', '..']) as $relativePath) {
-            $realPath = "{$this->getPathname()}/{$relativePath}";
-            $child = FilesystemObject::createFromPath($realPath);
-            $children[] = $child;
         }
 
         return $children;
@@ -261,9 +254,8 @@ class Directory extends FilesystemObject implements IteratorAggregate
         $this->move(dirname($this->getPathname()) . "/{$newName}", true);
     }
 
-    public function getIterator(array $args = []): RecursiveFilesystemIterator
+    public function getIterator(DirectoryContentIterator|array $config = []): DirectoryContentIterator
     {
-        $args = [...$args, 'path' => $this->getPathname()];
-        return new RecursiveFilesystemIterator(...$args);
+        return new DirectoryContentIterator($this->getPathname(), $config);
     }
 }
