@@ -26,7 +26,6 @@ trait TestPaths
     {
         Directory::createFromPath($this->getOutputPath())->deleteContents(
             new DirectoryContentIteratorConfiguration(
-                recursive: true,
                 contentFilters: [
                     new NameFilesystemFilter('.gitignore')
                 ]
@@ -58,5 +57,21 @@ trait TestPaths
         $class = $nsParts[count($nsParts) - 1];
 
         return substr($class, 0, strpos($class, 'Test'));
+    }
+
+    private function assertIterableMatchesContent(array $expected, Iterable $iterable, callable|string|null $mapping = null)
+    {
+        $files = [];
+
+        if($mapping === 'filename') {
+            $mapping = fn($file) => $file->getFilename();
+        }
+
+        foreach($iterable as $file) {
+            $files[] = is_null($mapping) ? $file : $mapping($file);
+        }
+
+        // Assert that array contents are the same, disregarding keys
+        $this->assertEqualsCanonicalizing($expected, $files);
     }
 }

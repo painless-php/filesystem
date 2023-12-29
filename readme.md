@@ -16,6 +16,7 @@ composer require painless-php/filesystem
 * FilesystemObject
     * File
     * Directory
+* ConfigurationFactory
 
 #### Exception
 
@@ -28,6 +29,14 @@ composer require painless-php/filesystem
 * FilesystemFilter
 
 ## TODO
+
+* Configuration
+    * option to map top level returned values
+    ' ConfigurationFactory
+    * Rename Configuration class?
+    * Fix DirectoryTests
+
+
 
 * Directory getContentNames()
 

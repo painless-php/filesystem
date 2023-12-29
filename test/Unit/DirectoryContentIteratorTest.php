@@ -2,7 +2,6 @@
 
 namespace Test\Unit;
 
-use Iterator;
 use PainlessPHP\Filesystem\FilesystemObject;
 use PainlessPHP\Filesystem\DirectoryContentIteratorConfiguration;
 use PainlessPHP\Filesystem\DirectoryContentIterator;
@@ -13,18 +12,6 @@ class DirectoryContentIteratorTest extends TestCase
 {
     use TestPaths;
 
-    private function iteratorContentsMatch(Iterator $iterator, array $expected)
-    {
-        $files = [];
-
-        foreach($iterator as $file) {
-            $files[] = $file->getFilename();
-        }
-
-        // Assert that array contents are the same, disregarding keys
-        $this->assertEqualsCanonicalizing($expected, $files);
-    }
-
     public function testItIteratesThroughAllDirectoriesAndFilesByDefault()
     {
         $iterator = new DirectoryContentIterator(
@@ -32,7 +19,11 @@ class DirectoryContentIteratorTest extends TestCase
             config: []
         );
 
-        $this->iteratorContentsMatch($iterator, $this->levelThreeDirsContents());
+        $this->assertIterableMatchesContent(
+            iterable: $iterator,
+            expected: $this->levelThreeDirsContents(),
+            mapping: 'filename'
+        );
     }
 
     public function testItFiltersAllContentsMatchedByScanFilters()
@@ -48,11 +39,15 @@ class DirectoryContentIteratorTest extends TestCase
             )
         );
 
-        $this->iteratorContentsMatch($iterator, [
-            'file_in_base_dir.txt',
-            '1',
-            'file_in_dir_1.txt'
-        ]);
+        $this->assertIterableMatchesContent(
+            iterable: $iterator,
+            mapping: 'filename',
+            expected: [
+                'file_in_base_dir.txt',
+                '1',
+                'file_in_dir_1.txt'
+            ]
+        );
     }
 
     public function testItFiltersAllContentsMatchedByContentFilters()
@@ -68,11 +63,15 @@ class DirectoryContentIteratorTest extends TestCase
             ]
         );
 
-        $this->iteratorContentsMatch($iterator, [
-            'file_in_base_dir.txt',
-            'file_in_dir_1.txt',
-            'file_in_dir_2.txt',
-            'file_in_dir_3.txt',
-        ]);
+        $this->assertIterableMatchesContent(
+            iterable: $iterator,
+            mapping: 'filename',
+            expected: [
+                'file_in_base_dir.txt',
+                'file_in_dir_1.txt',
+                'file_in_dir_2.txt',
+                'file_in_dir_3.txt',
+            ]
+        );
     }
 }

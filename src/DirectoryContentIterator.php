@@ -47,6 +47,12 @@ class DirectoryContentIterator extends FilterIterator
         return $this->path;
     }
 
+    public function current(): mixed
+    {
+        // TODO map returned values
+        return parent::current();
+    }
+
     private function setPath(string $path)
     {
         if(! is_dir($path)) {
