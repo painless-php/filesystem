@@ -156,12 +156,12 @@ class Directory extends FilesystemObject
      * Get children filesystem objects
      *
      * @param bool $recursive
-     * @param DirectoryContentIterator|array $config
+     * @param DirectoryContentIteratorConfiguration|array $config
      *
      * @return array<FilesystemObject> $contents
      *
      */
-    public function getContents(DirectoryContentIterator|array $config = []) : array
+    public function getContents(DirectoryContentIteratorConfiguration|array $config = []) : array
     {
         $children = [];
         $iterator = $this->getIterator(config: $config);

@@ -71,7 +71,13 @@ class Filesystem
         }
 
         /** @var Directory $startPath */
-        foreach($startPath->getContents() as $filesystemObject) {
+        $config = new DirectoryContentIteratorConfiguration(
+            scanFilters: [
+                fn(FilesystemObject $obj) => $obj->isFile()
+            ]
+        );
+
+        foreach($startPath->getContents($config) as $filesystemObject) {
             if($filesystemObject->getFilename() === $target) {
                 return $filesystemObject;
             }
