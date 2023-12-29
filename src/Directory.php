@@ -111,17 +111,9 @@ class Directory extends FilesystemObject
     /**
      * Delete the directory
      *
-     * @return bool $deleted Whether the directory was actually deleted
-     * (some files may be spared if $exclude parameter is used)
-     *
      */
     public function delete(DirectoryContentIteratorConfiguration|array $config = []) : bool
     {
-        if(! $config->recursive && ! $this->isEmpty()) {
-            $msg = "Directory is not empty, please use the recursive parameter if you wish to delete the directory along with it's contents";
-            throw new FilesystemException($msg, $this->getPathname());
-        }
-
         if($this->deleteContents($config)) {
             rmdir($this->getPathname());
             return true;
@@ -133,15 +125,12 @@ class Directory extends FilesystemObject
     /**
      * Delete contents of the directory
      *
-     * @return bool $isEmpty Whether directory is empty after deletion (some
-     * files may be spared if $exclude parameter is used)
-     * e
      */
     public function deleteContents(DirectoryContentIteratorConfiguration|array $config = []) : bool
     {
         $isEmpty = true;
 
-        foreach($this->getIterator($config) as $object) {
+        foreach($this->getIterator($config->with('recursive', false)) as $object) {
             if(! $object->delete($config)) {
                 $isEmpty = false;
             }
@@ -202,7 +191,7 @@ class Directory extends FilesystemObject
         $this->move(dirname($this->getPathname()) . "/{$newName}", true);
     }
 
-    public function getIterator(DirectoryContentIterator|array $config = []): DirectoryContentIterator
+    public function getIterator(DirectoryContentIteratorConfiguration|array $config = []): DirectoryContentIterator
     {
         return new DirectoryContentIterator($this->getPathname(), $config);
     }

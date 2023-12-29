@@ -128,7 +128,7 @@ abstract class FilesystemObject extends SplFileInfo
      * Delete filesystem object
      *
      */
-    abstract public function delete();
+    abstract public function delete() : bool;
 
     /**
      * Delete contents of the object.

@@ -39,6 +39,19 @@ trait TestPaths
         return $this->getTestInputPath('level_3_dirs');
     }
 
+    private function levelThreeDirsContents()
+    {
+        return [
+            '1',
+            '2',
+            '3',
+            'file_in_base_dir.txt',
+            'file_in_dir_1.txt',
+            'file_in_dir_2.txt',
+            'file_in_dir_3.txt'
+        ];
+    }
+
     private function getTestedClassShortName() : string
     {
         $nsParts = explode('\\', get_class($this));

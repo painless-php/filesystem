@@ -6,15 +6,17 @@ use Closure;
 use PainlessPHP\Filesystem\Interface\FilesystemFilter;
 use PainlessPHP\Filesystem\Filter\ClosureFilesystemFilter;
 use ReflectionMethod;
+use ReflectionParameter;
 
 class DirectoryContentIteratorConfiguration
 {
-    private static array|null $defaultAttributes = null;
+    /**
+     * @var array<ReflectionParameter>
+     */
+    private static array|null $constructorParameters = null;
     private array $attributes;
 
     public function __construct(
-        bool $returnMapping = false,
-        bool $recursive = false,
         array $scanFilters = [],
         array $contentFilters = []
     )
@@ -24,33 +26,34 @@ class DirectoryContentIteratorConfiguration
 
     private function setAttributes(array $attributes)
     {
-        $this->attributes = $this->getDefaultAttributes();
-
-        foreach($attributes as $key => $value) {
-            $mutator = 'mutate' . ucfirst($key);
-            $this->attributes[$key] = method_exists($this, $mutator) ? $this->$mutator($value) : $value;
+        foreach($this->getConstructorParameters() as $parameter) {
+            $value = $attributes[$parameter->getPosition()] ?? $parameter->getDefaultValue();
+            $this->setAttribute($parameter->getName(), $value);
         }
     }
 
-    static private function getDefaultAttributes() : array
+    private function setAttribute(string $attribute, mixed $value)
     {
-        if(self::$defaultAttributes === null) {
-            self::$defaultAttributes = self::resolveDefaultAttributes();
-        }
-
-        return self::$defaultAttributes;
+        $mutator = 'mutate' . ucfirst($attribute);
+        $this->attributes[$attribute] = method_exists($this, $mutator) ? $this->$mutator($value) : $value;
     }
 
-    static private function resolveDefaultAttributes()
+    /**
+     * @return array<ReflectionParameter>
+     */
+    static private function getConstructorParameters() : array
+    {
+        if(self::$constructorParameters === null) {
+            self::$constructorParameters = self::resolveConstructorParameters();
+        }
+
+        return self::$constructorParameters;
+    }
+
+    static private function resolveConstructorParameters() : array
     {
         $constructor = new ReflectionMethod(self::class, '__construct');
-        $defaults = [];
-
-        foreach($constructor->getParameters() as $parameter) {
-            $defaults[$parameter->getName()] = $parameter->getDefaultValue();
-        }
-
-        return $defaults;
+        return $constructor->getParameters();
     }
 
     public function __get(string $name)
@@ -71,5 +74,12 @@ class DirectoryContentIteratorConfiguration
     private function validateFiltersArg(FilesystemFilter|Closure ...$filters) : array
     {
         return array_map(fn($filter) => $filter instanceof Closure ? new ClosureFilesystemFilter($filter) : $filter, $filters);
+    }
+
+    public function with(string $attribute, mixed $value) : self
+    {
+        $clone = clone $this;
+        $clone->setAttribute($attribute, $value);
+        return $clone;
     }
 }

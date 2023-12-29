@@ -53,3 +53,8 @@ composer require painless-php/filesystem
 
 ## Notes
 - isRoot() will probably not work on windows (as well as functions that rely on it like findUpwards)
+
+- DirectoryContentIterator (FilterIterator)
+    - RecursiveIteratorIterator
+    - RecursiveFilterIterator
+    - RecursiveDirectoryIterator

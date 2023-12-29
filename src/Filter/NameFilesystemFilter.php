@@ -13,6 +13,6 @@ class NameFilesystemFilter implements FilesystemFilter
 
     public function shouldPass(FilesystemObject $filesystemObject): bool
     {
-        return $filesystemObject->getFilename() === $this->name;
+        return $filesystemObject->getFilename() !== $this->name;
     }
 }
