@@ -113,7 +113,7 @@ abstract class FilesystemObject extends SplFileInfo
      * Copy the filesystem object to the target location
      *
      */
-    abstract public function copy(string $destination);
+    abstract public function copy(string $destination) : bool;
 
     /**
      * Move the filesystem object

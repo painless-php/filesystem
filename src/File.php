@@ -170,7 +170,7 @@ class File extends FilesystemObject implements IteratorAggregate
         fclose($stream);
     }
 
-    public function copy(string $destination)
+    public function copy(string $destination) : bool
     {
         if(! $this->exists()) {
             throw new FileNotFoundException($this->getPathname());
@@ -187,7 +187,7 @@ class File extends FilesystemObject implements IteratorAggregate
             throw new FilesystemPermissionException($msg);
         }
 
-        copy($this->getPathname(), $destination);
+        return copy($this->getPathname(), $destination);
     }
 
     public function move(string $destination)

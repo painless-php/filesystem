@@ -30,11 +30,11 @@ class Directory extends FilesystemObject
      * Create directory on the filesystem
      *
      */
-    public function create(bool $recursive = false, bool $overwrite = false)
+    public function create(bool $recursive = false, bool $overwrite = false) : bool
     {
         // Do not attempt creation if file already exists
         if(is_dir($this->getPathname())) {
-            return;
+            return true;
         }
 
         if(is_file($this->getPathname())) {
@@ -65,7 +65,7 @@ class Directory extends FilesystemObject
             throw new FilesystemPermissionException($msg, $parentDir);
         }
 
-        mkdir($this->getPathname());
+        return mkdir($this->getPathname());
     }
 
     /**
@@ -89,16 +89,37 @@ class Directory extends FilesystemObject
     }
 
     /**
-     * Copy the filesystem object to target detination
+     * Copy the directory to target destination
      *
      */
-    public function copy(string $destination, bool $recursive = false)
+    public function copy(string $destination, bool $recursive = false, bool $createRecursively = false) : bool
     {
-        (new self($destination))->create(recursive: $recursive);
-
-        foreach($this->getIterator(recursive: $recursive) as $object) {
-            $object->copy("{$destination}/" . basename($object->getPathname()));
+        if(! (new self($destination))->create(recursive: $createRecursively)) {
+            return false;
         }
+
+        if($recursive) {
+            return $this->copyContents(destination: $destination, recursive: $recursive);
+        }
+
+        return true;
+    }
+
+    /**
+     * Copy the contents of the directory to the target location
+     *
+     */
+    public function copyContents(string $destination, bool $recursive = false) : bool
+    {
+        foreach($this->getIterator(recursive: false) as $object) {
+            $fileDestination = Filesystem::appendToPath($destination, $object->getFilename());
+
+            if($recursive && ! $object->copy($fileDestination, $recursive)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -141,16 +162,7 @@ class Directory extends FilesystemObject
 
         foreach($this->getIterator(recursive: false, config: $config) as $object) {
 
-            if($recursive && ! $object->delete(false, $config)) {
-                $deleted = false;
-            }
-
-            if() {
-            }
-        }
-
-        foreach($this->getIterator(recursive: $recursive, config: $config) as $object) {
-            if(! $object->delete(false, $config)) {
+            if($recursive && ! $object->delete($recursive, $config)) {
                 $deleted = false;
             }
         }

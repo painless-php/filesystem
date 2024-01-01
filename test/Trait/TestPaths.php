@@ -33,11 +33,15 @@ trait TestPaths
         //     )
         // );
 
-        $outputDir = $this->getOutputPath('*');
-        $cmd = "rm -r $outputDir";
+        $outputDir = $this->getOutputPath();
+        $gitIgnorePath = "$outputDir/.gitignore";
 
-        var_dump($cmd);
-        // exec($cmd);
+        $ignoreContent = file_get_contents($gitIgnorePath);
+        $cmd = "rm -r $outputDir";
+        exec($cmd);
+
+        mkdir($outputDir);
+        file_put_contents($gitIgnorePath, $ignoreContent);
     }
 
     private function levelThreeDirsPath() : string

@@ -4,7 +4,6 @@ namespace Test\Unit;
 
 use PainlessPHP\Filesystem\Directory;
 use PainlessPHP\Filesystem\FilesystemObject;
-use PainlessPHP\Filesystem\Filter\FileFilesystemFilter;
 use PHPUnit\Framework\TestCase;
 use Test\Trait\TestPaths;
 
@@ -15,7 +14,6 @@ class DirectoryTest extends TestCase
     public function tearDown() : void
     {
         parent::tearDown();
-        var_dump('CLEAN OUTPUT');
         $this->cleanOutput();
     }
 
@@ -89,25 +87,21 @@ class DirectoryTest extends TestCase
         $this->assertTrue(is_dir($path));
     }
 
-    public function testCopyCopiesFirstLevelFilesAndDirectories()
+    public function testCopyCreatesTheDirectoryAtDestination()
     {
-        $outputPath = $this->getOutputPath();
+        $outputPath = $this->getOutputPath('test-dir');
         $directory = Directory::createFromPath($this->levelThreeDirsPath());
         $directory->copy(destination: $outputPath, recursive: false);
-        $outputDir = Directory::createFromPath($outputPath);
+        Directory::createFromPath($outputPath);
 
-        $this->assertIterableMatchesContent(
-            iterable: $outputDir->getContents(recursive: true),
-            mapping: 'filename',
-            expected: $this->levelThreeDirsContents()
-        );
+        $this->assertTrue(is_dir($outputPath));
     }
 
     public function testCopyCopiesAllNestedFilesAndDirectoriesWhenRecursive()
     {
-        $outputPath = $this->getOutputPath();
+        $outputPath = $this->getOutputPath('test-dir');
         $directory = Directory::createFromPath($this->levelThreeDirsPath());
-        $directory->copy($outputPath);
+        $directory->copy(destination: $outputPath, recursive: true);
         $outputDir = Directory::createFromPath($outputPath);
 
         $this->assertIterableMatchesContent(
