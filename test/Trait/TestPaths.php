@@ -24,14 +24,20 @@ trait TestPaths
 
     private function cleanOutput()
     {
-        Directory::createFromPath($this->getOutputPath())->deleteContents(
-            recursive: true,
-            config: new DirectoryIteratorConfig(
-                resultFilters: [
-                    fn(FilesystemObject $file) => $file->getFilename() !== '.gitignore'
-                ]
-            )
-        );
+        // Directory::createFromPath($this->getOutputPath())->deleteContents(
+        //     recursive: true,
+        //     config: new DirectoryIteratorConfig(
+        //         resultFilters: [
+        //             fn(FilesystemObject $file) => $file->getFilename() !== '.gitignore'
+        //         ]
+        //     )
+        // );
+
+        $outputDir = $this->getOutputPath('*');
+        $cmd = "rm -r $outputDir";
+
+        var_dump($cmd);
+        // exec($cmd);
     }
 
     private function levelThreeDirsPath() : string

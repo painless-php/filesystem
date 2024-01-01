@@ -2,12 +2,12 @@
 
 namespace PainlessPHP\Filesystem\Internal\Iterator;
 
-use RecursiveFilterIterator as GlobalRecursiveFilterIterator;
+use RecursiveFilterIterator;
 use PainlessPHP\Filesystem\Internal\Trait\HasConfig;
 use PainlessPHP\Filesystem\DirectoryIteratorConfig;
 use PainlessPHP\Filesystem\Internal\Trait\FiltersFilesystemObjects;
 
-class InternalRecursiveFilterIterator extends GlobalRecursiveFilterIterator
+class InternalRecursiveFilterIterator extends RecursiveFilterIterator
 {
     use HasConfig, FiltersFilesystemObjects;
 

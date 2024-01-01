@@ -15,7 +15,8 @@ class DirectoryTest extends TestCase
     public function tearDown() : void
     {
         parent::tearDown();
-        // $this->cleanOutput();
+        var_dump('CLEAN OUTPUT');
+        $this->cleanOutput();
     }
 
     public function testGetContentsReturnsFilesystemObjectsInDirectory()

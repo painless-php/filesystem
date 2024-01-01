@@ -3,6 +3,8 @@
 namespace PainlessPHP\Filesystem\Internal\Iterator;
 
 use FilesystemIterator;
+use PainlessPHP\Filesystem\Directory;
+use PainlessPHP\Filesystem\Exception\FileNotFoundException;
 use RecursiveDirectoryIterator;
 use PainlessPHP\Filesystem\FilesystemObject;
 
@@ -28,6 +30,15 @@ class InternalRecursiveDirectoryIterator extends RecursiveDirectoryIterator
             $current = dirname($current);
         }
 
-        return FilesystemObject::createFromPath($current);
+        try {
+            return FilesystemObject::createFromPath($current);
+        }
+        catch(FileNotFoundException $e) {
+            if(basename($current) === '..') {
+                return new Directory($current);
+            }
+
+            throw $e;
+        }
     }
 }

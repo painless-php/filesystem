@@ -117,9 +117,15 @@ class Directory extends FilesystemObject
      */
     public function delete(bool $recursive = false, DirectoryIteratorConfig|array $config = []) : bool
     {
-        if($this->deleteContents($recursive, $config)) {
-            rmdir($this->getPathname());
-            return true;
+        $deleted = true;
+
+        if($recursive) {
+            $deleted = $this->deleteContents(recursive: $recursive, config: $config);
+        }
+
+        if($deleted) {
+            var_dump("deleted dir {$this->getFilename()}");
+            return rmdir($this->getPathname());
         }
 
         return false;
@@ -131,15 +137,25 @@ class Directory extends FilesystemObject
      */
     public function deleteContents(bool $recursive = false, DirectoryIteratorConfig|array $config = []) : bool
     {
-        $isEmpty = true;
+        $deleted = true;
 
-        foreach($this->getIterator(recursive: $recursive) as $object) {
-            if(! $object->delete($recursive, $config)) {
-                $isEmpty = false;
+        foreach($this->getIterator(recursive: false, config: $config) as $object) {
+
+            if($recursive && ! $object->delete(false, $config)) {
+                $deleted = false;
+            }
+
+            if() {
             }
         }
 
-        return $isEmpty;
+        foreach($this->getIterator(recursive: $recursive, config: $config) as $object) {
+            if(! $object->delete(false, $config)) {
+                $deleted = false;
+            }
+        }
+
+        return $deleted;
     }
 
     /**
