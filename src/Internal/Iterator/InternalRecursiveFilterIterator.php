@@ -30,7 +30,7 @@ class InternalRecursiveFilterIterator extends RecursiveFilterIterator
             return false;
         }
 
-        if($this->shouldFilter($file, $this->config->readFilters)) {
+        if($this->shouldFilter($file, $this->config->recursionFilters)) {
             return false;
         }
 

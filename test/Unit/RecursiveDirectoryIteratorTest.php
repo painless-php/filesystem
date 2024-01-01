@@ -31,7 +31,7 @@ class RecursiveDirectoryIteratorTest extends TestCase
         $iterator = new RecursiveDirectoryIterator(
             path: $this->levelThreeDirsPath(),
             config: new DirectoryIteratorConfig(
-                readFilters: [
+                recursionFilters: [
                     function(FilesystemObject $file) {
                         return $file->getFilename() !== '2';
                     }

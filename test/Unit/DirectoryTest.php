@@ -3,6 +3,7 @@
 namespace Test\Unit;
 
 use PainlessPHP\Filesystem\Directory;
+use PainlessPHP\Filesystem\DirectoryIteratorConfig;
 use PainlessPHP\Filesystem\FilesystemObject;
 use PHPUnit\Framework\TestCase;
 use Test\Trait\TestPaths;
@@ -108,6 +109,24 @@ class DirectoryTest extends TestCase
             iterable: $outputDir->getContents(recursive: true),
             mapping: 'filename',
             expected: $this->levelThreeDirsContents()
+        );
+    }
+
+    public function testCopyCopiesOnlyTheFilesThatPassFilters()
+    {
+        $outputPath = $this->getOutputPath('test-dir');
+        $directory = Directory::createFromPath($this->levelThreeDirsPath());
+        $filesToCopy = ['1', '2', '3'];
+
+        $directory->copy(destination: $outputPath, recursive: true, config: new DirectoryIteratorConfig(resultFilters: [
+            fn($file) => in_array($file->getFilename(), $filesToCopy)
+        ]));
+        $outputDir = Directory::createFromPath($outputPath);
+
+        $this->assertIterableMatchesContent(
+            iterable: $outputDir->getContents(recursive: true),
+            mapping: 'filename',
+            expected: $filesToCopy
         );
     }
 }

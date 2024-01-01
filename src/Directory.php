@@ -92,14 +92,18 @@ class Directory extends FilesystemObject
      * Copy the directory to target destination
      *
      */
-    public function copy(string $destination, bool $recursive = false, bool $createRecursively = false) : bool
+    public function copy(string $destination, bool $recursive = false, bool $createRecursively = false, DirectoryIteratorConfig|array $config = []) : bool
     {
         if(! (new self($destination))->create(recursive: $createRecursively)) {
             return false;
         }
 
         if($recursive) {
-            return $this->copyContents(destination: $destination, recursive: $recursive);
+            return $this->copyContents(
+                destination: $destination,
+                recursive: $recursive,
+                config: $config
+            );
         }
 
         return true;
@@ -109,12 +113,12 @@ class Directory extends FilesystemObject
      * Copy the contents of the directory to the target location
      *
      */
-    public function copyContents(string $destination, bool $recursive = false) : bool
+    public function copyContents(string $destination, bool $recursive = false, DirectoryIteratorConfig|array $config = []) : bool
     {
-        foreach($this->getIterator(recursive: false) as $object) {
+        foreach($this->getIterator(recursive: false, config: $config) as $object) {
             $fileDestination = Filesystem::appendToPath($destination, $object->getFilename());
 
-            if($recursive && ! $object->copy($fileDestination, $recursive)) {
+            if($recursive && ! $object->copy($fileDestination, $recursive, false, $config)) {
                 return false;
             }
         }

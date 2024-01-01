@@ -72,7 +72,7 @@ class Filesystem
 
         /** @var Directory $startPath */
         $config = new DirectoryIteratorConfig(
-            readFilters: [
+            recursionFilters: [
                 fn(FilesystemObject $obj) => $obj->isFile()
             ]
         );
