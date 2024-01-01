@@ -3,10 +3,10 @@
 namespace PainlessPHP\Filesystem\Internal\Iterator;
 
 use FilesystemIterator;
-use RecursiveDirectoryIterator as BaseIterator;
+use RecursiveDirectoryIterator;
 use PainlessPHP\Filesystem\FilesystemObject;
 
-class InternalRecursiveDirectoryIterator extends BaseIterator
+class InternalRecursiveDirectoryIterator extends RecursiveDirectoryIterator
 {
     public function __construct(string $path)
     {

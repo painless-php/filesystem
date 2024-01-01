@@ -5,7 +5,7 @@ namespace PainlessPHP\Filesystem;
 use PainlessPHP\Filesystem\FilesystemObject;
 use PainlessPHP\Filesystem\Internal\Iterator\InternalFilterIterator;
 use PainlessPHP\Filesystem\DirectoryIteratorConfig;
-use DirectoryIterator as BaseDirectoryIterator;
+use PainlessPHP\Filesystem\Internal\Iterator\InternalDirectoryIterator;
 
 class DirectoryIterator extends InternalFilterIterator
 {
@@ -13,7 +13,7 @@ class DirectoryIterator extends InternalFilterIterator
     {
         parent::__construct(
             $path,
-            new BaseDirectoryIterator($path),
+            new InternalDirectoryIterator($path),
             $config
         );
     }

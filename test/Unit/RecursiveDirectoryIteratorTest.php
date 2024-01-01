@@ -26,12 +26,12 @@ class RecursiveDirectoryIteratorTest extends TestCase
         );
     }
 
-    public function testItFiltersAllContentsMatchedByScanFilters()
+    public function testItFiltersAllContentsMatchedByReadFilters()
     {
         $iterator = new RecursiveDirectoryIterator(
             path: $this->levelThreeDirsPath(),
             config: new DirectoryIteratorConfig(
-                scanFilters: [
+                readFilters: [
                     function(FilesystemObject $file) {
                         return $file->getFilename() !== '2';
                     }
@@ -50,12 +50,12 @@ class RecursiveDirectoryIteratorTest extends TestCase
         );
     }
 
-    public function testItFiltersAllContentsMatchedByContentFilters()
+    public function testItFiltersAllContentsMatchedByResultFilters()
     {
         $iterator = new RecursiveDirectoryIterator(
             path: $this->levelThreeDirsPath(),
             config: new DirectoryIteratorConfig(
-                contentFilters: [
+                resultFilters: [
                     function(FilesystemObject $file) {
                         return $file->isFile();
                     }

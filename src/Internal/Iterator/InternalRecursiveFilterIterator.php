@@ -3,7 +3,6 @@
 namespace PainlessPHP\Filesystem\Internal\Iterator;
 
 use RecursiveFilterIterator as GlobalRecursiveFilterIterator;
-use PainlessPHP\Filesystem\FilesystemObject;
 use PainlessPHP\Filesystem\Internal\Trait\HasConfig;
 use PainlessPHP\Filesystem\DirectoryIteratorConfig;
 use PainlessPHP\Filesystem\Internal\Trait\FiltersFilesystemObjects;
@@ -31,16 +30,11 @@ class InternalRecursiveFilterIterator extends GlobalRecursiveFilterIterator
             return false;
         }
 
-        if($this->shouldFilterScan($file)) {
+        if($this->shouldFilter($file, $this->config->readFilters)) {
             return false;
         }
 
         return true;
-    }
-
-    private function shouldFilterScan(FilesystemObject $filesystemObject) : bool
-    {
-        return $this->shouldFilter($filesystemObject, $this->config->scanFilters);
     }
 
     /**

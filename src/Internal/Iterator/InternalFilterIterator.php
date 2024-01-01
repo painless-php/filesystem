@@ -7,7 +7,6 @@ use FilterIterator;
 use PainlessPHP\Filesystem\Internal\Trait\HasConfig;
 use PainlessPHP\Filesystem\DirectoryIteratorConfig;
 use PainlessPHP\Filesystem\Exception\FilesystemException;
-use PainlessPHP\Filesystem\FilesystemObject;
 use PainlessPHP\Filesystem\Interface\DirectoryContentIterator;
 use PainlessPHP\Filesystem\Internal\Trait\FiltersFilesystemObjects;
 
@@ -28,7 +27,7 @@ class InternalFilterIterator extends FilterIterator implements DirectoryContentI
     {
         $file = $this->current();
 
-        if($this->shouldFilterContent($file)) {
+        if($this->shouldFilter($file, $this->config->resultFilters)) {
             return false;
         }
 
@@ -48,10 +47,5 @@ class InternalFilterIterator extends FilterIterator implements DirectoryContentI
         }
 
         $this->path = $path;
-    }
-
-    private function shouldFilterContent(FilesystemObject $filesystemObject) : bool
-    {
-        return $this->shouldFilter($filesystemObject, $this->config->contentFilters);
     }
 }

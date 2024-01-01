@@ -17,8 +17,8 @@ class DirectoryIteratorConfig
     private array $attributes;
 
     public function __construct(
-        array $scanFilters = [],
-        array $contentFilters = []
+        array $readFilters = [],
+        array $resultFilters = []
     )
     {
         $this->setAttributes(func_get_args());
@@ -61,12 +61,12 @@ class DirectoryIteratorConfig
         return $this->attributes[$name];
     }
 
-    private function mutateScanFilters(array $filters) : array
+    private function mutateReadFilters(array $filters) : array
     {
         return $this->validateFiltersArg(...$filters);
     }
 
-    private function mutateContentFilters(array $filters) : array
+    private function mutateResultFilters(array $filters) : array
     {
         return $this->validateFiltersArg(...$filters);
     }
