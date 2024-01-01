@@ -3,9 +3,9 @@
 namespace Test\Trait;
 
 use PainlessPHP\Filesystem\Directory;
-use PainlessPHP\Filesystem\DirectoryContentIteratorConfiguration;
+use PainlessPHP\Filesystem\DirectoryIteratorConfig;
 use PainlessPHP\Filesystem\Filesystem;
-use PainlessPHP\Filesystem\Filter\NameFilesystemFilter;
+use PainlessPHP\Filesystem\FilesystemObject;
 
 trait TestPaths
 {
@@ -25,9 +25,10 @@ trait TestPaths
     private function cleanOutput()
     {
         Directory::createFromPath($this->getOutputPath())->deleteContents(
-            new DirectoryContentIteratorConfiguration(
-                contentFilters: [
-                    new NameFilesystemFilter('.gitignore')
+            recursive: true,
+            config: new DirectoryIteratorConfig(
+                resultFilters: [
+                    fn(FilesystemObject $file) => $file->getFilename() !== '.gitignore'
                 ]
             )
         );
