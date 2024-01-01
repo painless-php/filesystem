@@ -148,8 +148,7 @@ class Directory extends FilesystemObject
             $deleted = $this->deleteContents(recursive: $recursive, config: $config);
         }
 
-        if($deleted) {
-            var_dump("deleted dir {$this->getFilename()}");
+        if($deleted && $this->isEmpty()) {
             return rmdir($this->getPathname());
         }
 

@@ -4,6 +4,7 @@ namespace Test\Unit;
 
 use PainlessPHP\Filesystem\Directory;
 use PainlessPHP\Filesystem\DirectoryIteratorConfig;
+use PainlessPHP\Filesystem\Filesystem;
 use PainlessPHP\Filesystem\FilesystemObject;
 use PHPUnit\Framework\TestCase;
 use Test\Trait\TestPaths;
@@ -67,25 +68,25 @@ class DirectoryTest extends TestCase
     public function testCreateCreatesTheDirectoryOnFilesystem()
     {
         $path = $this->getOutputPath('test-dir');
-        $this->assertFileDoesNotExist($path);
+        $this->assertDirectoryDoesNotExist($path);
 
         $directory = new Directory($path);
         $directory->create(recursive: false);
 
-        $this->assertTrue(is_dir($path));
+        $this->assertDirectoryExists($path);
     }
 
     public function testCreateCreatesNestedDirectoriesOnFilesystemWhenRecursive()
     {
         $path = $this->getOutputPath('test-dir-1', 'test-dir-2');
-        $this->assertFileDoesNotExist(dirname($path));
-        $this->assertFileDoesNotExist($path);
+        $this->assertDirectoryDoesNotExist(dirname($path));
+        $this->assertDirectoryDoesNotExist($path);
 
         $directory = new Directory($path);
         $directory->create(recursive: true);
 
-        $this->assertTrue(is_dir(dirname($path)));
-        $this->assertTrue(is_dir($path));
+        $this->assertDirectoryExists(dirname($path));
+        $this->assertDirectoryExists($path);
     }
 
     public function testCopyCreatesTheDirectoryAtDestination()
@@ -95,7 +96,7 @@ class DirectoryTest extends TestCase
         $directory->copy(destination: $outputPath, recursive: false);
         Directory::createFromPath($outputPath);
 
-        $this->assertTrue(is_dir($outputPath));
+        $this->assertDirectoryExists($outputPath);
     }
 
     public function testCopyCopiesAllNestedFilesAndDirectoriesWhenRecursive()
@@ -128,5 +129,46 @@ class DirectoryTest extends TestCase
             mapping: 'filename',
             expected: $filesToCopy
         );
+    }
+
+    public function testDeleteDeletesTheDirectory()
+    {
+        $targetPath = $this->getOutputPath('test-dir');
+        $this->assertDirectoryDoesNotExist($targetPath);
+
+        mkdir($targetPath);
+        $this->assertDirectoryExists($targetPath);
+        $directory = Directory::createFromPath($targetPath);
+
+        $this->assertTrue($directory->delete(recursive: false));
+        $this->assertDirectoryDoesNotExist($targetPath);
+    }
+
+    public function testDeleteDoesNotDeleteDirectoryWhenDirectoryHasContents()
+    {
+        $targetPath = $this->getOutputPath('test-dir');
+        $this->assertDirectoryDoesNotExist($targetPath);
+
+        mkdir($targetPath);
+        file_put_contents(Filesystem::appendToPath($targetPath, 'foo.txt'), 'content');
+        $this->assertDirectoryExists($targetPath);
+        $directory = Directory::createFromPath($targetPath);
+
+        $this->assertFalse($directory->delete(recursive: false));
+        $this->assertDirectoryExists($targetPath);
+    }
+
+    public function testDeleteDeletesTheDirectoryAndItsContentsWhenRecursive()
+    {
+        $targetPath = $this->getOutputPath('test-dir');
+        $this->assertDirectoryDoesNotExist($targetPath);
+
+        mkdir($targetPath);
+        file_put_contents(Filesystem::appendToPath($targetPath, 'foo.txt'), 'content');
+        $this->assertDirectoryExists($targetPath);
+        $directory = Directory::createFromPath($targetPath);
+
+        $this->assertTrue($directory->delete(recursive: true));
+        $this->assertDirectoryDoesNotExist($targetPath);
     }
 }

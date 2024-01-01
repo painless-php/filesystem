@@ -55,7 +55,6 @@ class File extends FilesystemObject implements IteratorAggregate
      */
     public function delete() : bool
     {
-        var_dump("deleted file {$this->getFilename()}");
         return unlink($this->getPathname());
     }
 
