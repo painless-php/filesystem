@@ -2,7 +2,6 @@
 
 namespace Test\Unit;
 
-use PainlessPHP\Filesystem\Configuration\ConfigurationFactory;
 use PainlessPHP\Filesystem\Directory;
 use PainlessPHP\Filesystem\Filter\FileFilesystemFilter;
 use PHPUnit\Framework\TestCase;
@@ -21,15 +20,14 @@ class DirectoryTest extends TestCase
     public function testGetContentsReturnsFilesystemObjectsInDirectory()
     {
         $directory = Directory::createFromPath($this->levelThreeDirsPath());
-
-        $config = ConfigurationFactory::returnFilenames()->create();
-
-        $this->assertIterableMatchesContent($directory->getContents(), [
-            '1',
-            'file_in_base_dir.txt',
-        ]);
-
-        $this->assertSame($expected, array_map(fn($file) => $file->getFilename(), $directory->getContents()));
+        $this->assertIterableMatchesContent(
+            iterable: $directory->getContents(),
+            mapping: 'filename',
+            expected: [
+                '1',
+                'file_in_base_dir.txt',
+            ]
+        );
     }
 
     public function testGetContentsReturnsAllContentsWhenRecursiveIsTrue()

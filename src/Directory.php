@@ -6,6 +6,9 @@ use PainlessPHP\Filesystem\Exception\FilesystemPermissionException;
 use PainlessPHP\Filesystem\Exception\FileNotFoundException;
 use PainlessPHP\Filesystem\Exception\FilesystemException;
 use FilesystemIterator;
+use PainlessPHP\Filesystem\Interface\DirectoryContentIterator;
+use PainlessPHP\Filesystem\DirectoryIterator;
+use PainlessPHP\Filesystem\RecursiveDirectoryIterator;
 
 class Directory extends FilesystemObject
 {
@@ -93,7 +96,7 @@ class Directory extends FilesystemObject
     {
         (new self($destination))->create(recursive: $recursive);
 
-        foreach($this->getIterator(['recursive' => $recursive]) as $object) {
+        foreach($this->getIterator(recursive: $recursive) as $object) {
             $object->copy("{$destination}/" . basename($object->getPathname()));
         }
     }
@@ -105,16 +108,16 @@ class Directory extends FilesystemObject
     public function move(string $destination, bool $recursive = false)
     {
         $this->copy($destination, $recursive);
-        $this->delete(new DirectoryContentIteratorConfiguration(recursive: true));
+        $this->delete($recursive);
     }
 
     /**
      * Delete the directory
      *
      */
-    public function delete(DirectoryContentIteratorConfiguration|array $config = []) : bool
+    public function delete(bool $recursive = false, DirectoryIteratorConfig|array $config = []) : bool
     {
-        if($this->deleteContents($config)) {
+        if($this->deleteContents($recursive, $config)) {
             rmdir($this->getPathname());
             return true;
         }
@@ -126,11 +129,11 @@ class Directory extends FilesystemObject
      * Delete contents of the directory
      *
      */
-    public function deleteContents(DirectoryContentIteratorConfiguration|array $config = []) : bool
+    public function deleteContents(bool $recursive = false, DirectoryIteratorConfig|array $config = []) : bool
     {
         $isEmpty = true;
 
-        foreach($this->getIterator($config->with('recursive', false)) as $object) {
+        foreach($this->getIterator(recursive: $recursive) as $object) {
             if(! $object->delete($config)) {
                 $isEmpty = false;
             }
@@ -156,15 +159,15 @@ class Directory extends FilesystemObject
      * Get children filesystem objects
      *
      * @param bool $recursive
-     * @param DirectoryContentIteratorConfiguration|array $config
+     * @param DirectoryIteratorConfig|array $config
      *
      * @return array<FilesystemObject> $contents
      *
      */
-    public function getContents(DirectoryContentIteratorConfiguration|array $config = []) : array
+    public function getContents(bool $recursive = false, DirectoryIteratorConfig|array $config = []) : array
     {
         $children = [];
-        $iterator = $this->getIterator(config: $config);
+        $iterator = $this->getIterator($recursive, $config);
 
         foreach($iterator as $item) {
             $children[] = $item;
@@ -191,8 +194,16 @@ class Directory extends FilesystemObject
         $this->move(dirname($this->getPathname()) . "/{$newName}", true);
     }
 
-    public function getIterator(DirectoryContentIteratorConfiguration|array $config = []): DirectoryContentIterator
+    /**
+     * Get an iterator for the directory contents
+     *
+     */
+    public function getIterator(bool $recursive = false, DirectoryIteratorConfig|array $config = []): DirectoryContentIterator
     {
-        return new DirectoryContentIterator($this->getPathname(), $config);
+        if($recursive) {
+            return new RecursiveDirectoryIterator($this->getPathname(), $config);
+        }
+
+        return new DirectoryIterator($this->getPathname(), $config);
     }
 }

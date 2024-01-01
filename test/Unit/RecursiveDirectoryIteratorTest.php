@@ -3,18 +3,18 @@
 namespace Test\Unit;
 
 use PainlessPHP\Filesystem\FilesystemObject;
-use PainlessPHP\Filesystem\DirectoryContentIteratorConfiguration;
-use PainlessPHP\Filesystem\DirectoryContentIterator;
+use PainlessPHP\Filesystem\DirectoryIteratorConfig;
+use PainlessPHP\Filesystem\RecursiveDirectoryIterator;
 use PHPUnit\Framework\TestCase;
 use Test\Trait\TestPaths;
 
-class DirectoryContentIteratorTest extends TestCase
+class RecursiveDirectoryIteratorTest extends TestCase
 {
     use TestPaths;
 
     public function testItIteratesThroughAllDirectoriesAndFilesByDefault()
     {
-        $iterator = new DirectoryContentIterator(
+        $iterator = new RecursiveDirectoryIterator(
             path: $this->levelThreeDirsPath(),
             config: []
         );
@@ -28,9 +28,9 @@ class DirectoryContentIteratorTest extends TestCase
 
     public function testItFiltersAllContentsMatchedByScanFilters()
     {
-        $iterator = new DirectoryContentIterator(
+        $iterator = new RecursiveDirectoryIterator(
             path: $this->levelThreeDirsPath(),
-            config: new DirectoryContentIteratorConfiguration(
+            config: new DirectoryIteratorConfig(
                 scanFilters: [
                     function(FilesystemObject $file) {
                         return $file->getFilename() !== '2';
@@ -52,15 +52,14 @@ class DirectoryContentIteratorTest extends TestCase
 
     public function testItFiltersAllContentsMatchedByContentFilters()
     {
-        $iterator = new DirectoryContentIterator(
+        $iterator = new RecursiveDirectoryIterator(
             path: $this->levelThreeDirsPath(),
-            config: [
-                'contentFilters' => [
+            config: new DirectoryIteratorConfig(
+                contentFilters: [
                     function(FilesystemObject $file) {
                         return $file->isFile();
                     }
-                ]
-            ]
+                ])
         );
 
         $this->assertIterableMatchesContent(

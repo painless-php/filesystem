@@ -6,7 +6,7 @@ use FilesystemIterator;
 use RecursiveDirectoryIterator as BaseIterator;
 use PainlessPHP\Filesystem\FilesystemObject;
 
-class RecursiveDirectoryIterator extends BaseIterator
+class InternalRecursiveDirectoryIterator extends BaseIterator
 {
     public function __construct(string $path)
     {

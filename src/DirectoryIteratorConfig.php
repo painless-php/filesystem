@@ -8,7 +8,7 @@ use PainlessPHP\Filesystem\Filter\ClosureFilesystemFilter;
 use ReflectionMethod;
 use ReflectionParameter;
 
-class DirectoryContentIteratorConfiguration
+class DirectoryIteratorConfig
 {
     /**
      * @var array<ReflectionParameter>

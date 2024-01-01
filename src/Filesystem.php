@@ -71,13 +71,13 @@ class Filesystem
         }
 
         /** @var Directory $startPath */
-        $config = new DirectoryContentIteratorConfiguration(
+        $config = new DirectoryIteratorConfig(
             scanFilters: [
                 fn(FilesystemObject $obj) => $obj->isFile()
             ]
         );
 
-        foreach($startPath->getContents($config) as $filesystemObject) {
+        foreach($startPath->getContents(recursive: true, config: $config) as $filesystemObject) {
             if($filesystemObject->getFilename() === $target) {
                 return $filesystemObject;
             }
@@ -112,7 +112,7 @@ class Filesystem
         }
 
         /** @var Directory $startPath */
-        foreach($startPath->getIterator() as $filesystemObject) {
+        foreach($startPath->getIterator(recursive: true) as $filesystemObject) {
             if($filesystemObject->getFilename() === $target) {
                 return $filesystemObject;
             }

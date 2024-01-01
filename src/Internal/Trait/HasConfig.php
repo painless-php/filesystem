@@ -2,41 +2,23 @@
 
 namespace PainlessPHP\Filesystem\Internal\Trait;
 
-use PainlessPHP\Filesystem\DirectoryContentIteratorConfiguration;
-use PainlessPHP\Filesystem\FilesystemObject;
+use PainlessPHP\Filesystem\DirectoryIteratorConfig;
 
 trait HasConfig
 {
-    private DirectoryContentIteratorConfiguration $config;
+    private DirectoryIteratorConfig $config;
 
-    private function setConfig(array|DirectoryContentIteratorConfiguration $config)
+    private function setConfig(array|DirectoryIteratorConfig $config)
     {
         if(is_array($config)) {
-            $config = new DirectoryContentIteratorConfiguration(...$config);
+            $config = new DirectoryIteratorConfig(...$config);
         }
 
         $this->config = $config;
     }
 
-    public function getConfiguration() : DirectoryContentIteratorConfiguration
+    public function getConfig() : DirectoryIteratorConfig
     {
         return $this->config;
-    }
-
-	/**
-     * @param FilesystemObject $filesystemObject
-     * @param array<FilesystemFilter> $filters
-     *
-     * @return bool
-     */
-    private function shouldFilter(FilesystemObject $filesystemObject, array $filters) : bool
-    {
-        foreach($filters as $filter) {
-            if(! $filter->shouldPass($filesystemObject)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

@@ -5,13 +5,14 @@ namespace PainlessPHP\Filesystem\Internal\Iterator;
 use RecursiveFilterIterator as GlobalRecursiveFilterIterator;
 use PainlessPHP\Filesystem\FilesystemObject;
 use PainlessPHP\Filesystem\Internal\Trait\HasConfig;
-use PainlessPHP\Filesystem\DirectoryContentIteratorConfiguration;
+use PainlessPHP\Filesystem\DirectoryIteratorConfig;
+use PainlessPHP\Filesystem\Internal\Trait\FiltersFilesystemObjects;
 
-class RecursiveFilterIterator extends GlobalRecursiveFilterIterator
+class InternalRecursiveFilterIterator extends GlobalRecursiveFilterIterator
 {
-    use HasConfig;
+    use HasConfig, FiltersFilesystemObjects;
 
-    public function __construct(RecursiveDirectoryIterator $iterator, private string $path, array|DirectoryContentIteratorConfiguration $config)
+    public function __construct(InternalRecursiveDirectoryIterator $iterator, private string $path, array|DirectoryIteratorConfig $config)
     {
         parent::__construct($iterator);
         $this->setConfig($config);
@@ -48,9 +49,9 @@ class RecursiveFilterIterator extends GlobalRecursiveFilterIterator
      * Override to make sure that recursing iterators are instantiated correctly
      *
      */
-    public function getChildren(): ?RecursiveFilterIterator
+    public function getChildren(): ?InternalRecursiveFilterIterator
     {
-        /** @var RecursiveDirectoryIterator $inner */
+        /** @var InternalRecursiveDirectoryIterator $inner */
         $inner = $this->getInnerIterator();
         return new self($inner->getChildren(), $this->path, $this->config);
     }
