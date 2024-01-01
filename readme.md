@@ -31,14 +31,10 @@ composer require painless-php/filesystem
 
 ## TODO
 
-* Inertnalize iterators, only expose interface (and config)
-
 * Configuration
     * option to map top level returned values
     ' ConfigurationFactory
         * $config = ConfigurationFactory::returnFilenames()->create();
-    * Rename Configuration class? (DirectoryIterator, DirectoryIteratorConfig)
-    * Fix DirectoryTests
     * Use ::CHILD_FIRST?
 
 

@@ -171,4 +171,16 @@ class DirectoryTest extends TestCase
         $this->assertTrue($directory->delete(recursive: true));
         $this->assertDirectoryDoesNotExist($targetPath);
     }
+
+    public function testNonRecursiveIteratorIsArrayable()
+    {
+        $contents = Directory::createFromPath($this->levelThreeDirsPath())->getIterator(recursive: false)->toArray();
+        $this->assertIterableMatchesContent(['1', 'file_in_base_dir.txt'], $contents, 'filename');
+    }
+
+    public function testRecursiveIteratorIsArrayable()
+    {
+        $contents = Directory::createFromPath($this->levelThreeDirsPath())->getIterator(recursive: true)->toArray();
+        $this->assertIterableMatchesContent($this->levelThreeDirsContents(), $contents, 'filename');
+    }
 }

@@ -48,4 +48,9 @@ class InternalFilterIterator extends FilterIterator implements DirectoryContentI
 
         $this->path = $path;
     }
+
+    public function toArray(): array
+    {
+        return iterator_to_array($this);
+    }
 }

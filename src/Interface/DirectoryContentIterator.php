@@ -7,4 +7,6 @@ use Iterator;
 interface DirectoryContentIterator extends Iterator
 {
     public function getPath() : string;
+
+    public function toArray() : array;
 }
