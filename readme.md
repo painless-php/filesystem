@@ -31,6 +31,8 @@ composer require painless-php/filesystem
 
 ## TODO
 
+* Test Directory::move()
+
 * Configuration
     * option to map top level returned values
     ' ConfigurationFactory
