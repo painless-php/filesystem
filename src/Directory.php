@@ -134,7 +134,7 @@ class Directory extends FilesystemObject
         $isEmpty = true;
 
         foreach($this->getIterator(recursive: $recursive) as $object) {
-            if(! $object->delete($config)) {
+            if(! $object->delete($recursive, $config)) {
                 $isEmpty = false;
             }
         }

@@ -64,45 +64,55 @@ class DirectoryTest extends TestCase
         );
     }
 
+    public function testCreateCreatesTheDirectoryOnFilesystem()
+    {
+        $path = $this->getOutputPath('test-dir');
+        $this->assertFileDoesNotExist($path);
+
+        $directory = new Directory($path);
+        $directory->create(recursive: false);
+
+        $this->assertTrue(is_dir($path));
+    }
+
+    public function testCreateCreatesNestedDirectoriesOnFilesystemWhenRecursive()
+    {
+        $path = $this->getOutputPath('test-dir-1', 'test-dir-2');
+        $this->assertFileDoesNotExist(dirname($path));
+        $this->assertFileDoesNotExist($path);
+
+        $directory = new Directory($path);
+        $directory->create(recursive: true);
+
+        $this->assertTrue(is_dir(dirname($path)));
+        $this->assertTrue(is_dir($path));
+    }
+
     public function testCopyCopiesFirstLevelFilesAndDirectories()
     {
         $outputPath = $this->getOutputPath();
         $directory = Directory::createFromPath($this->levelThreeDirsPath());
-        $directory->copy($outputPath);
-
+        $directory->copy(destination: $outputPath, recursive: false);
         $outputDir = Directory::createFromPath($outputPath);
-        $contents = $outputDir->getContents(recursive: true);
-        $contents = array_map(fn($file) => $file->getFilename(), $contents);
 
-        $expected = [
-            'file_in_base_dir',
-            '1'
-        ];
-
-        $this->assertSame($expected, $contents);
+        $this->assertIterableMatchesContent(
+            iterable: $outputDir->getContents(recursive: true),
+            mapping: 'filename',
+            expected: $this->levelThreeDirsContents()
+        );
     }
 
     public function testCopyCopiesAllNestedFilesAndDirectoriesWhenRecursive()
     {
-        // $outputPath = $this->getOutputPath();
-        // $directory = Directory::createFromPath($this->levelThreeDirsPath());
-        // $directory->copy($outputPath);
+        $outputPath = $this->getOutputPath();
+        $directory = Directory::createFromPath($this->levelThreeDirsPath());
+        $directory->copy($outputPath);
+        $outputDir = Directory::createFromPath($outputPath);
 
-        // $outputDir = Directory::createFromPath($outputPath);
-        // $contents = $outputDir->getContents(recursive: true);
-        // $contents = array_map(fn($file) => $file->getFilename(), $contents);
-        // sort($contents);
-
-        // $expected = [
-        //     '1',
-        //     '2',
-        //     '3',
-        //     'file_in_base_dir.txt',
-        //     'file_in_dir_1.txt',
-        //     'file_in_dir_2.txt',
-        //     'file_in_dir_3.txt'
-        // ];
-
-        // $this->assertSame($expected, $contents);
+        $this->assertIterableMatchesContent(
+            iterable: $outputDir->getContents(recursive: true),
+            mapping: 'filename',
+            expected: $this->levelThreeDirsContents()
+        );
     }
 }
