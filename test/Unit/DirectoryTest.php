@@ -183,4 +183,41 @@ class DirectoryTest extends TestCase
         $contents = Directory::createFromPath($this->levelThreeDirsPath())->getIterator(recursive: true)->toArray();
         $this->assertIterableMatchesContent($this->levelThreeDirsContents(), $contents, 'filename');
     }
+
+    public function testContainsRelativePathReturnsTrueWhenChildItemExistsOnSameLevel()
+    {
+        $dir = Directory::createFromPath($this->levelThreeDirsPath());
+        $this->assertTrue($dir->containsRelativePath('1'));
+        $this->assertTrue($dir->containsRelativePath('file_in_base_dir.txt'));
+    }
+
+    public function testContainsRelativePathReturnsFalseWhenChildItemDoesNotExistOnSameLevel()
+    {
+        $dir = Directory::createFromPath($this->levelThreeDirsPath());
+        $this->assertFalse($dir->containsRelativePath('2'));
+        $this->assertFalse($dir->containsRelativePath('3'));
+        $this->assertFalse($dir->containsRelativePath('file_in_dir_1.txt'));
+        $this->assertFalse($dir->containsRelativePath('file_in_dir_2.txt'));
+        $this->assertFalse($dir->containsRelativePath('file_in_dir_3.txt'));
+    }
+
+    public function testContainsRelativePathReturnsTrueWhenChildItemExistsOnAnyLevelAndRecursiveIsUsed()
+    {
+        $dir = Directory::createFromPath($this->levelThreeDirsPath());
+
+        $this->assertTrue($dir->containsRelativePath(relativePath: 'file_in_base_dir.txt', recursive: true));
+        $this->assertTrue($dir->containsRelativePath(relativePath: '1', recursive: true));
+        $this->assertTrue($dir->containsRelativePath(relativePath: '1/file_in_dir_1.txt', recursive: true));
+        $this->assertTrue($dir->containsRelativePath(relativePath: '1/2', recursive: true));
+        $this->assertTrue($dir->containsRelativePath(relativePath: '1/2/file_in_dir_2.txt', recursive: true));
+        $this->assertTrue($dir->containsRelativePath(relativePath: '1/2/3', recursive: true));
+        $this->assertTrue($dir->containsRelativePath(relativePath: '1/2/3/file_in_dir_3.txt', recursive: true));
+
+    }
+
+    public function testContainsRelativePathReturnsFalseWhenChildItemDoesNotExistOnAnyLevelAndRecursiveIsUsed()
+    {
+        $dir = Directory::createFromPath($this->levelThreeDirsPath());
+        $this->assertFalse($dir->containsRelativePath(relativePath: 'foasdasjkdah', recursive: true));
+    }
 }

@@ -187,6 +187,21 @@ class Directory extends FilesystemObject
     }
 
     /**
+     * Check if the directory contains the target with a relative path
+     *
+     */
+    public function containsRelativePath(string $relativePath, bool $recursive = false) : bool
+    {
+        foreach($this->getIterator(recursive: $recursive) as $object) {
+            if($relativePath === $object->getRelativePath($this->getPathname())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get children filesystem objects
      *
      * @param bool $recursive
