@@ -127,7 +127,7 @@ class Filesystem
      * Note that the native realpath() function does not work for files that do not exist
      *
      */
-    public static function realpath(string $path, string $currentDir) : string
+    public static function realpath(string $path, string $currentDir = '') : string
     {
         if(file_exists($path)) {
             return realpath($path);

@@ -32,18 +32,20 @@ class Directory extends FilesystemObject
      */
     public function create(bool $recursive = false, bool $overwrite = false) : bool
     {
+        $destination = $this->getAbsolutePath();
+
         // Do not attempt creation if file already exists
-        if(is_dir($this->getPathname())) {
+        if(is_dir($destination)) {
             return true;
         }
 
-        if(is_file($this->getPathname())) {
+        if(is_file($destination)) {
             $msg = "A file with this name already exists";
-            throw new FilesystemException($msg, $this->getPathname());
+            throw new FilesystemException($msg, $destination);
         }
 
         // Check if parent directory exists, if not, create it recursively
-        $parentDir = dirname($this->getPathname());
+        $parentDir = dirname($destination);
 
         if(! is_dir($parentDir)) {
 
@@ -65,7 +67,7 @@ class Directory extends FilesystemObject
             throw new FilesystemPermissionException($msg, $parentDir);
         }
 
-        return mkdir($this->getPathname());
+        return mkdir($destination);
     }
 
     /**
@@ -247,9 +249,9 @@ class Directory extends FilesystemObject
     public function getIterator(bool $recursive = false, DirectoryIteratorConfig|array $config = []): DirectoryContentIterator
     {
         if($recursive) {
-            return new RecursiveDirectoryIterator($this->getPathname(), $config);
+            return new RecursiveDirectoryIterator($this->getAbsolutePath(), $config);
         }
 
-        return new DirectoryIterator($this->getPathname(), $config);
+        return new DirectoryIterator($this->getAbsolutePath(), $config);
     }
 }

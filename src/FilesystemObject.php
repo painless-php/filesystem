@@ -44,7 +44,7 @@ abstract class FilesystemObject extends SplFileInfo
      * Get the real path of the object.
      *
      */
-    public function getAbsolutePath(string $currentDir) : string
+    public function getAbsolutePath(string $currentDir = '') : string
     {
         return Filesystem::realpath(
             path: $this->getPathname(),

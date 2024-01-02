@@ -89,6 +89,20 @@ class DirectoryTest extends TestCase
         $this->assertDirectoryExists($path);
     }
 
+    public function testCreateResolvesDotsInPath()
+    {
+        $path = $this->getOutputPath('test-dir-1', 'test-dir-2', 'test-dir-3', '..', '..');
+        $directory = new Directory($path);
+        $this->assertTrue($directory->create(recursive: true));
+
+        $this->assertOutputDirectoryContentsMatch(
+            expected: [
+                'test-dir-1'
+            ],
+            mapping: 'filename'
+        );
+    }
+
     public function testCopyCreatesTheDirectoryAtDestination()
     {
         $outputPath = $this->getOutputPath('test-dir');

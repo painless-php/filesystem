@@ -85,4 +85,19 @@ trait TestPaths
         // Assert that array contents are the same, disregarding keys
         $this->assertEqualsCanonicalizing($expected, $files);
     }
+
+    public function assertOutputDirectoryContentsMatch(array $expected, callable|string|null $mapping = null)
+    {
+        $outputPath = $this->getOutputPath();
+        $iter = Directory::createFromPath($outputPath)->getIterator(
+            recursive: true,
+            config: new DirectoryIteratorConfig(
+                resultFilters: [
+                    fn(FilesystemObject $file) => $file->getRelativePath($outputPath) !== '.gitignore'
+                ]
+            )
+        );
+
+        return $this->assertIterableMatchesContent($expected, $iter, $mapping);
+    }
 }
