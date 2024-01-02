@@ -41,14 +41,15 @@ abstract class FilesystemObject extends SplFileInfo
     }
 
     /**
-     * Get the real path of the object. This method doesn't use the native
-     * realpath() function because realpath() won't work with files that don't exist.
+     * Get the real path of the object.
      *
      */
-    public function getAbsolutePath() : string
+    public function getAbsolutePath(string $currentDir) : string
     {
-        // TODO
-        return $this->getPathname();
+        return Filesystem::realpath(
+            path: $this->getPathname(),
+            currentDir: $currentDir
+        );
     }
 
     /**
@@ -60,7 +61,7 @@ abstract class FilesystemObject extends SplFileInfo
      */
     public function getRelativePath(string $parentPath) : string
     {
-        $path = $this->getAbsolutePath();
+        $path = $this->getPathname();
         $parentPath = str_ends_with($parentPath, DIRECTORY_SEPARATOR) ? $parentPath : $parentPath . DIRECTORY_SEPARATOR;
 
         if(! str_starts_with($path, $parentPath)) {

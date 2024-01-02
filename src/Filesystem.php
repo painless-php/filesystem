@@ -121,4 +121,34 @@ class Filesystem
         $msg = "Could not find file '$target' inside '$startPath'";
         throw new FileNotFoundException($msg);
     }
+
+    /**
+     * Get the real canonical path.
+     * Note that the native realpath() function does not work for files that do not exist
+     *
+     */
+    public static function realpath(string $path, string $currentDir) : string
+    {
+        if(file_exists($path)) {
+            return realpath($path);
+        }
+
+        if(strpos($path, '..')) {
+            $result = [];
+            foreach (explode(DIRECTORY_SEPARATOR, $path) as $part) {
+                if($part === '..') {
+                    array_pop($result);
+                    continue;
+                }
+                $result[] = $part;
+            }
+            $path = implode(DIRECTORY_SEPARATOR, $result);
+        }
+
+        if(str_starts_with($path, '.')) {
+            $path = str_replace('.', $currentDir, $path);
+        }
+
+        return $path;
+    }
 }
