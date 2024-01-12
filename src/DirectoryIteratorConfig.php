@@ -82,4 +82,12 @@ class DirectoryIteratorConfig
         $clone->setAttribute($attribute, $value);
         return $clone;
     }
+
+    public function merge(array|self $config) : self
+    {
+        return new self([
+            ...$this->attributes,
+            ...($config instanceof self ? $config->attributes : $config)
+        ]);
+    }
 }

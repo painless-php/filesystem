@@ -254,4 +254,15 @@ class Directory extends FilesystemObject
 
         return new DirectoryIterator($this->getAbsolutePath(), $config);
     }
+
+    public function findFirstFromContents(Callable $filter, bool $recursive = false,  DirectoryIteratorConfig|array $config = []) : ?FilesystemObject
+    {
+        foreach ($this->getIterator(config: $config, recursive: $recursive) as $file) {
+            if($filter($file)) {
+                return $file;
+            }
+        }
+
+        return null;
+    }
 }

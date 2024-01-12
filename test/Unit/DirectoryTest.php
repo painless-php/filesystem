@@ -234,4 +234,18 @@ class DirectoryTest extends TestCase
         $dir = Directory::createFromPath($this->levelThreeDirsPath());
         $this->assertFalse($dir->containsRelativePath(relativePath: 'foasdasjkdah', recursive: true));
     }
+
+    public function testFindFirstFromContents()
+    {
+        $dir = Directory::createFromPath($this->levelThreeDirsPath());
+        $result = $dir->findFirstFromContents(
+            recursive: true,
+            filter: function(FilesystemObject $file) {
+                return $file->getFilename() === '3';
+            }
+        );
+
+        $this->assertInstanceOf(Directory::class, $result);
+        $this->assertSame('3', $result->getFilename());
+    }
 }
