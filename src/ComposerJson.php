@@ -5,6 +5,7 @@ namespace PainlessPHP\Filesystem;
 use InvalidArgumentException;
 use JsonException;
 use PainlessPHP\Filesystem\Exception\FilesystemException;
+use PainlessPHP\Filesystem\Internal\StringHelpers;
 
 class ComposerJson extends File
 {
@@ -41,7 +42,7 @@ class ComposerJson extends File
                 continue;
             }
 
-            $relativePath = basename($file->getRelativePath($namespacePath), '.php');
+            $relativePath = StringHelpers::removeSuffix($file->getRelativePath($namespacePath), '.php');
             return $namespaceRoot . implode('\\', explode(DIRECTORY_SEPARATOR, $relativePath));
         }
 

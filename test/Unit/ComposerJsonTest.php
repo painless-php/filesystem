@@ -3,6 +3,7 @@
 namespace Test\Unit;
 
 use PainlessPHP\Filesystem\ComposerJson;
+use PainlessPHP\Filesystem\Exception\FilesystemException;
 use PainlessPHP\Filesystem\File;
 use PHPUnit\Framework\TestCase;
 use Test\Trait\TestPaths;
@@ -53,11 +54,20 @@ class ComposerJsonTest extends TestCase
         $this->assertSame($expected, $composer->getParsedContent('autoload', 'psr-4'));
     }
 
-    public function testResolvePsr4Class()
+    public function testResolvePsr4ClassCanResolveTopLevelNamespace()
     {
         $composer = new ComposerJson($this->composerLocation);
         $expected = File::class;
         $namespace = $composer->resolvePsr4Class($this->getProjectRootPath('src', 'File.php'));
+
+        $this->assertSame($expected, $namespace);
+    }
+
+    public function testResolvePsr4ClassCanResolveNestedNamespace()
+    {
+        $composer = new ComposerJson($this->composerLocation);
+        $expected = FilesystemException::class;
+        $namespace = $composer->resolvePsr4Class($this->getProjectRootPath('src', 'Exception', 'FilesystemException.php'));
 
         $this->assertSame($expected, $namespace);
     }
