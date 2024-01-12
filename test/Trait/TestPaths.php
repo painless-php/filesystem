@@ -9,6 +9,11 @@ use PainlessPHP\Filesystem\FilesystemObject;
 
 trait TestPaths
 {
+    private function getProjectRootPath(string ...$append)
+    {
+        return Filesystem::appendToPath(dirname(dirname(__DIR__)), ...$append);
+    }
+
     /**
      * Get the path of input for this test
      */

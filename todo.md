@@ -21,7 +21,6 @@
         * WriterInterface
 
 
-* ComposerJson::locate() (using Filesystem::findUpwards)
 * Env editable class
 
 * Make sure that proper errors are thrown when trying to operate on a non-existent file
