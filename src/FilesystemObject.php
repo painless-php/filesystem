@@ -108,7 +108,7 @@ abstract class FilesystemObject extends SplFileInfo
      * thrown
      *
      */
-    abstract public function create(bool $recursive = false, bool $overwrite = false);
+    abstract public function create(bool $recursive = false, bool $overwrite = false) : bool;
 
     /**
      * Copy the filesystem object to the target location

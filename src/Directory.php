@@ -12,14 +12,14 @@ use PainlessPHP\Filesystem\RecursiveDirectoryIterator;
 
 class Directory extends FilesystemObject
 {
-    public static function createFromPath(string $pathname): self
+    public static function createFromPath(string $pathname, bool $allowNonexistent = false): self
     {
         if(is_file($pathname)) {
             $msg = "Target path '$pathname' is a file";
             throw new FilesystemException($msg);
         }
 
-        if(! file_exists($pathname)) {
+        if(! $allowNonexistent && ! file_exists($pathname)) {
             throw FileNotFoundException::createFromPath($pathname);
         }
 
@@ -163,6 +163,10 @@ class Directory extends FilesystemObject
      */
     public function deleteContents(bool $recursive = false, DirectoryIteratorConfig|array $config = []) : bool
     {
+        if(! $this->exists()) {
+            return false;
+        }
+
         $deleted = true;
 
         foreach($this->getIterator(recursive: false, config: $config) as $object) {

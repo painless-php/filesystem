@@ -10,14 +10,14 @@ use Traversable;
 
 class File extends FilesystemObject implements IteratorAggregate
 {
-    public static function createFromPath(string $pathname): self
+    public static function createFromPath(string $pathname, bool $allowNonexistent = false): self
     {
         if(is_dir($pathname)) {
             $msg = "Target path '$pathname' is a directory";
             throw new FilesystemException($msg);
         }
 
-        if(! file_exists($pathname)) {
+        if(! $allowNonexistent && ! file_exists($pathname)) {
             throw FileNotFoundException::createFromPath($pathname);
         }
 
@@ -28,13 +28,17 @@ class File extends FilesystemObject implements IteratorAggregate
      * Create the file on the filesystem
      *
      */
-    public function create(bool $recursive = false, bool $overwrite = false)
+    public function create(bool $recursive = false, bool $overwrite = false) : bool
     {
+        if($this->exists() && ! $overwrite) {
+            return true;
+        }
+
         if($recursive) {
             $this->getParentDirectory()->create(true);
         }
 
-        file_put_contents($this->getPathname(), '', $overwrite ? 0 : FILE_APPEND);
+        file_put_contents($this->getPathname(), '');
     }
 
     /**
@@ -64,7 +68,10 @@ class File extends FilesystemObject implements IteratorAggregate
      */
     public function deleteContents()
     {
-        file_put_contents($this->getPathname(), '');
+        // Do not create file with empty contents if file does not exist.
+        if($this->exists()) {
+            file_put_contents($this->getPathname(), '');
+        }
     }
 
     /**
