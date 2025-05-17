@@ -5,7 +5,6 @@ namespace PainlessPHP\Filesystem;
 use PainlessPHP\Filesystem\Exception\FileNotFoundException;
 use PainlessPHP\Filesystem\Exception\FilesystemException;
 use PainlessPHP\Filesystem\Exception\FilesystemPermissionException;
-use PainlessPHP\Filesystem\Filter\FileFilesystemFilter;
 use PainlessPHP\Filesystem\Internal\StringHelpers;
 
 /**
