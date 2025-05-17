@@ -188,8 +188,11 @@ class File extends FilesystemObject implements IteratorAggregate
             throw new FilesystemPermissionException($msg);
         }
 
-        if(is_writable($destination)) {
-            $msg = "Copy destination '{$destination}' is not writable";
+        $parentDir = dirname($destination);
+        $hasParentDir = $destination !== $parentDir;
+
+        if($hasParentDir && is_writable($parentDir)) {
+            $msg = "Copy destination '{$destination}' parent directory is not writable";
             throw new FilesystemPermissionException($msg);
         }
 
